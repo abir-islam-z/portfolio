@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String   // Hashed
+  createdAt DateTime @default(now())
+}
+
+model Hero {
+  id                String   @id @default("singleton")
+  introBadge        String   @default("INTRO")
+  videoDuration     String   @default("0:60")
+  title             String   @default("Meet Abrar")
+  description       String   @default("60 second intro")
+  openToWork        Boolean  @default(true)
+  location          String   @default("London, UK")
+  sponsorshipInfo   String   @default("No sponsorship needed")
+  updatedAt         DateTime @updatedAt
+}
+
+model Stat {
+  id        Int      @id @default(autoincrement())
+  value     String
+  label     String
+  order     Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+model Experience {
+  id          Int      @id @default(autoincrement())
+  role        String
+  company     String
+  period      String
+  description String
+  skills      String   
+  order       Int      @default(0)
+  updatedAt   DateTime @updatedAt
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  image       String
+  tags        String   
+  isFeatured  Boolean  @default(false)
+  link        String?
+  github      String?
+  order       Int      @default(0)
+  updatedAt   DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model Testimonial {
+  id        Int      @id @default(autoincrement())
+  name      String
+  role      String
+  content   String
+  image     String?
+  order     Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+model Certification {
+  id        Int      @id @default(autoincrement())
+  title     String
+  issuer    String
+  date      String
+  link      String?
+  order     Int      @default(0)
+  updatedAt DateTime @updatedAt
+}

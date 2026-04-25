@@ -1,6 +1,23 @@
+import { useEffect, useState } from "react"
 import { Card } from "./ui/card"
+import { getStats } from "@/lib/cms"
 
 export default function Stats() {
+  const [stats, setStats] = useState<any[]>([
+    { value: "4+", label: "Years of Experience" },
+    { value: "25+", label: "Projects Completed" },
+    { value: "10+", label: "Global Clients" },
+    { value: "9K+", label: "LinkedIn Following" }
+  ])
+
+  useEffect(() => {
+    async function loadStats() {
+      const data = await getStats()
+      if (data && data.length > 0) setStats(data)
+    }
+    loadStats()
+  }, [])
+
   return (
     <section className="py-24 px-6 max-w-7xl mx-auto">
       <div className="grid lg:grid-cols-2 gap-16 items-start">
@@ -17,25 +34,18 @@ export default function Stats() {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <StatCard value="4+" label="Years of Experience" />
-          <StatCard value="25+" label="Projects Completed" />
-          <StatCard value="10+" label="Global Clients" />
-          <StatCard value="9K+" label="LinkedIn Following" />
+          {stats.map((stat, i) => (
+            <Card key={i} className="p-8 bg-secondary/50 border-border hover:border-primary/20 transition-all group">
+              <div className="text-4xl font-black text-primary mb-2 group-hover:scale-105 transition-transform origin-left">
+                {stat.value}
+              </div>
+              <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                {stat.label}
+              </div>
+            </Card>
+          ))}
         </div>
       </div>
     </section>
-  )
-}
-
-function StatCard({ value, label }: { value: string; label: string }) {
-  return (
-    <Card className="p-8 bg-secondary/50 border-border hover:border-primary/20 transition-all group">
-      <div className="text-4xl font-black text-primary mb-2 group-hover:scale-105 transition-transform origin-left">
-        {value}
-      </div>
-      <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-        {label}
-      </div>
-    </Card>
   )
 }

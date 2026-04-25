@@ -2,9 +2,18 @@ import { useEffect, useState } from "react"
 import { RiPlayFill } from "@remixicon/react"
 import { Badge } from "./ui/badge"
 import { Button } from "./ui/button"
+import { getHero } from "@/lib/cms"
 
 export default function Hero() {
   const [particles, setParticles] = useState<{ left: string; top: string; delay: string; duration: string }[]>([])
+  const [data, setData] = useState<any>({
+    title: "Meet Abrar",
+    description: "60 second intro",
+    introBadge: "INTRO",
+    videoDuration: "0:60",
+    location: "London, UK",
+    sponsorshipInfo: "No sponsorship needed"
+  })
 
   useEffect(() => {
     const p = [...Array(40)].map(() => ({
@@ -14,15 +23,21 @@ export default function Hero() {
       duration: `${5 + Math.random() * 10}s`
     }))
     setParticles(p)
+
+    async function loadHero() {
+      const h = await getHero()
+      if (h) setData(h)
+    }
+    loadHero()
   }, [])
 
   return (
     <section className="relative pt-32 pb-20 px-6 overflow-hidden">
       {/* Exact Video Banner Container */}
-      <div className="relative max-w-6xl mx-auto h-[480px] rounded-[32px] overflow-hidden bg-secondary border border-border shadow-2xl group">
+      <div className="relative max-w-6xl mx-auto h-120 rounded-[32px] overflow-hidden bg-secondary border border-border shadow-2xl group">
         {/* Particle Animation Background */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-transparent to-transparent opacity-50" />
+          <div className="absolute inset-0 bg-linear-to-b from-primary/10 via-transparent to-transparent opacity-50" />
           <div className="absolute inset-0 grid-overlay opacity-20" />
           
           {particles.map((p, i) => (
@@ -39,18 +54,17 @@ export default function Hero() {
           ))}
         </div>
 
-
         {/* Badges */}
         <div className="absolute top-8 left-8 flex items-center gap-2">
           <Badge variant="secondary" className="bg-background/40 backdrop-blur-md border-border text-[10px] tracking-widest uppercase">
             <div className="w-1.5 h-1.5 rounded-full bg-destructive animate-pulse mr-2" />
-            INTRO
+            {data.introBadge}
           </Badge>
         </div>
 
         <div className="absolute bottom-8 right-8">
           <Badge variant="secondary" className="bg-background/40 backdrop-blur-md border-border text-[10px] tracking-widest">
-            0:60
+            {data.videoDuration}
           </Badge>
         </div>
 
@@ -63,8 +77,8 @@ export default function Hero() {
             <RiPlayFill size={40} fill="currentColor" />
           </Button>
           <div className="text-center">
-            <h2 className="text-xl md:text-2xl font-bold mb-1">Meet Abrar</h2>
-            <p className="text-sm text-muted-foreground font-medium">60 second intro</p>
+            <h2 className="text-xl md:text-2xl font-bold mb-1">{data.title}</h2>
+            <p className="text-sm text-muted-foreground font-medium">{data.description}</p>
           </div>
         </div>
       </div>
@@ -76,12 +90,13 @@ export default function Hero() {
           Open to Work — No Sponsorship Required
         </Badge>
         <Badge variant="outline" className="px-4 py-2 rounded-full border-border bg-secondary/50 text-muted-foreground text-xs font-semibold">
-          London, UK
+          {data.location}
         </Badge>
         <Badge variant="outline" className="px-4 py-2 rounded-full border-border bg-secondary/50 text-muted-foreground text-xs font-semibold">
-          No sponsorship needed
+          {data.sponsorshipInfo}
         </Badge>
       </div>
     </section>
   )
 }
+

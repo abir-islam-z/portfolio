@@ -1,9 +1,13 @@
-import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router"
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import { TanStackDevtools } from "@tanstack/react-devtools"
-import { Navbar } from "@/components/Navbar"
-
+import {
+  HeadContent,
+  Outlet,
+  Scripts,
+  createRootRoute,
+} from "@tanstack/react-router"
+import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import appCss from "../styles.css?url"
+import { Navbar } from "@/components/Navbar"
 
 export const Route = createRootRoute({
   head: () => ({
@@ -21,7 +25,7 @@ export const Route = createRootRoute({
       {
         name: "description",
         content: "Data Scientist | LLMs, RAG & NLP | London, UK",
-      }
+      },
     ],
     links: [
       {
@@ -36,17 +40,17 @@ export const Route = createRootRoute({
       <p>The requested page could not be found.</p>
     </main>
   ),
-  shellComponent: RootDocument,
+  component: RootDocument,
 })
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootDocument() {
   return (
     <html lang="en">
       <head>
         <HeadContent />
       </head>
       <body>
-        <div className="flex flex-col min-h-screen">
+        <div className="flex min-h-screen flex-col">
           <Navbar />
           <main className="flex-1">
             <Outlet />
@@ -68,5 +72,3 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     </html>
   )
 }
-
-
