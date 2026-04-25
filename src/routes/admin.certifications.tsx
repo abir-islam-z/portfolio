@@ -11,31 +11,44 @@ import {
   updateCertification,
 } from "@/lib/cms"
 
+interface CertificationItem {
+  id?: number
+  title: string
+  issuer: string
+  date: string
+  link?: string | null
+  order: number
+}
+
 function AdminCertificationsComponent() {
-  const [certs, setCerts] = useState<Array<any>>([])
+  const [certs, setCerts] = useState<CertificationItem[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadData() {
       const data = await getCertifications()
-      setCerts(data)
+      setCerts(data as CertificationItem[])
       setLoading(false)
     }
     loadData()
   }, [])
 
-  const handleSave = async (item: any) => {
+  const handleSave = async (item: CertificationItem) => {
     await updateCertification({ data: item })
     const updated = await getCertifications()
-    setCerts(updated)
+    setCerts(updated as CertificationItem[])
     alert("Certification saved!")
   }
 
-  const handleDelete = async (id: number) => {
-    if (confirm("Delete this certification?")) {
-      await deleteCertification({ data: id })
-      const updated = await getCertifications()
-      setCerts(updated)
+  const handleDelete = async (id?: number) => {
+    if (id) {
+      if (confirm("Delete this certification?")) {
+        await deleteCertification({ data: id })
+        const updated = await getCertifications()
+        setCerts(updated as CertificationItem[])
+      }
+    } else {
+      setCerts(certs.filter((c) => c.id !== undefined))
     }
   }
 
@@ -74,7 +87,7 @@ function AdminCertificationsComponent() {
         {certs.length > 0 ? (
           certs.map((item, i) => (
             <Card key={i} className="border-border bg-card/30 p-6">
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-5">
                 <div className="space-y-2 lg:col-span-2">
                   <Label>Certification Title</Label>
                   <Input
@@ -104,6 +117,18 @@ function AdminCertificationsComponent() {
                     onChange={(e) => {
                       const next = [...certs]
                       next[i].date = e.target.value
+                      setCerts(next)
+                    }}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Order</Label>
+                  <Input
+                    type="number"
+                    value={item.order}
+                    onChange={(e) => {
+                      const next = [...certs]
+                      next[i].order = parseInt(e.target.value) || 0
                       setCerts(next)
                     }}
                   />

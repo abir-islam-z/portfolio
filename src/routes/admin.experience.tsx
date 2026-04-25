@@ -8,35 +8,45 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { deleteExperience, getExperience, updateExperience } from "@/lib/cms"
 
+interface ExperienceItem {
+  id?: number
+  role: string
+  company: string
+  period: string
+  description: string
+  skills: string
+  order: number
+}
+
 function AdminExperienceComponent() {
-  const [experience, setExperience] = useState<Array<any>>([])
+  const [experience, setExperience] = useState<ExperienceItem[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadData() {
       const data = await getExperience()
-      setExperience(data)
+      setExperience(data as ExperienceItem[])
       setLoading(false)
     }
     loadData()
   }, [])
 
-  const handleSave = async (item: any) => {
+  const handleSave = async (item: ExperienceItem) => {
     await updateExperience({ data: item })
     const updated = await getExperience()
-    setExperience(updated)
+    setExperience(updated as ExperienceItem[])
     alert("Experience saved!")
   }
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id?: number) => {
     if (id) {
       if (confirm("Delete this entry?")) {
         await deleteExperience({ data: id })
         const updated = await getExperience()
-        setExperience(updated)
+        setExperience(updated as ExperienceItem[])
       }
     } else {
-      setExperience(experience.filter((_, i) => experience[i].id !== undefined))
+      setExperience(experience.filter((e) => e.id !== undefined))
     }
   }
 
@@ -110,6 +120,18 @@ function AdminExperienceComponent() {
                   />
                 </div>
                 <div className="space-y-2">
+                  <Label>Order (Lower = First)</Label>
+                  <Input
+                    type="number"
+                    value={item.order}
+                    onChange={(e) => {
+                      const next = [...experience]
+                      next[i].order = parseInt(e.target.value) || 0
+                      setExperience(next)
+                    }}
+                  />
+                </div>
+                <div className="space-y-2 md:col-span-2">
                   <Label>Skills (Comma separated)</Label>
                   <Input
                     value={item.skills}

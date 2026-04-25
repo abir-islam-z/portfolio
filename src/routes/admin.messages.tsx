@@ -4,14 +4,22 @@ import { RiMailLine, RiTimeLine, RiUserLine } from "@remixicon/react"
 import { Card } from "@/components/ui/card"
 import { getContactMessages } from "@/lib/cms"
 
+interface ContactMessage {
+  id: number
+  name: string
+  email: string
+  message: string
+  createdAt: string | Date
+}
+
 function AdminMessagesComponent() {
-  const [messages, setMessages] = useState<Array<any>>([])
+  const [messages, setMessages] = useState<ContactMessage[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadData() {
       const data = await getContactMessages()
-      setMessages(data)
+      setMessages(data as ContactMessage[])
       setLoading(false)
     }
     loadData()

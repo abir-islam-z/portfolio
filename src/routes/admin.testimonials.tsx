@@ -12,31 +12,44 @@ import {
   updateTestimonial,
 } from "@/lib/cms"
 
+interface TestimonialItem {
+  id?: number
+  name: string
+  role: string
+  content: string
+  image?: string | null
+  order: number
+}
+
 function AdminTestimonialsComponent() {
-  const [testimonials, setTestimonials] = useState<Array<any>>([])
+  const [testimonials, setTestimonials] = useState<TestimonialItem[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadData() {
       const data = await getTestimonials()
-      setTestimonials(data)
+      setTestimonials(data as TestimonialItem[])
       setLoading(false)
     }
     loadData()
   }, [])
 
-  const handleSave = async (item: any) => {
+  const handleSave = async (item: TestimonialItem) => {
     await updateTestimonial({ data: item })
     const updated = await getTestimonials()
-    setTestimonials(updated)
+    setTestimonials(updated as TestimonialItem[])
     alert("Testimonial saved!")
   }
 
-  const handleDelete = async (id: number) => {
-    if (confirm("Delete this testimonial?")) {
-      await deleteTestimonial({ data: id })
-      const updated = await getTestimonials()
-      setTestimonials(updated)
+  const handleDelete = async (id?: number) => {
+    if (id) {
+      if (confirm("Delete this testimonial?")) {
+        await deleteTestimonial({ data: id })
+        const updated = await getTestimonials()
+        setTestimonials(updated as TestimonialItem[])
+      }
+    } else {
+      setTestimonials(testimonials.filter((t) => t.id !== undefined))
     }
   }
 
@@ -88,16 +101,30 @@ function AdminTestimonialsComponent() {
                       }}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label>Position / Role</Label>
-                    <Input
-                      value={item.role}
-                      onChange={(e) => {
-                        const next = [...testimonials]
-                        next[i].role = e.target.value
-                        setTestimonials(next)
-                      }}
-                    />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Position / Role</Label>
+                      <Input
+                        value={item.role}
+                        onChange={(e) => {
+                          const next = [...testimonials]
+                          next[i].role = e.target.value
+                          setTestimonials(next)
+                        }}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Order</Label>
+                      <Input
+                        type="number"
+                        value={item.order}
+                        onChange={(e) => {
+                          const next = [...testimonials]
+                          next[i].order = parseInt(e.target.value) || 0
+                          setTestimonials(next)
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-2">

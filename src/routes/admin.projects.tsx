@@ -14,35 +14,47 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { deleteProject, getProjects, updateProject } from "@/lib/cms"
 
+interface ProjectItem {
+  id?: number
+  title: string
+  description: string
+  image: string
+  tags: string
+  isFeatured: boolean
+  link?: string | null
+  github?: string | null
+  order: number
+}
+
 function AdminProjectsComponent() {
-  const [projects, setProjects] = useState<Array<any>>([])
+  const [projects, setProjects] = useState<ProjectItem[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadData() {
       const data = await getProjects()
-      setProjects(data)
+      setProjects(data as ProjectItem[])
       setLoading(false)
     }
     loadData()
   }, [])
 
-  const handleSave = async (item: any) => {
+  const handleSave = async (item: ProjectItem) => {
     await updateProject({ data: item })
     const updated = await getProjects()
-    setProjects(updated)
+    setProjects(updated as ProjectItem[])
     alert("Project saved!")
   }
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id?: number) => {
     if (id) {
       if (confirm("Delete this project?")) {
         await deleteProject({ data: id })
         const updated = await getProjects()
-        setProjects(updated)
+        setProjects(updated as ProjectItem[])
       }
     } else {
-      setProjects(projects.filter((_, i) => projects[i].id !== undefined))
+      setProjects(projects.filter((p) => p.id !== undefined))
     }
   }
 
@@ -105,6 +117,18 @@ function AdminProjectsComponent() {
                       onChange={(e) => {
                         const next = [...projects]
                         next[i].image = e.target.value
+                        setProjects(next)
+                      }}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Order (Lower = First)</Label>
+                    <Input
+                      type="number"
+                      value={item.order}
+                      onChange={(e) => {
+                        const next = [...projects]
+                        next[i].order = parseInt(e.target.value) || 0
                         setProjects(next)
                       }}
                     />

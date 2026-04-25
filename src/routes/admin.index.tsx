@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 import {
   deleteStat,
   getHero,
@@ -14,24 +15,44 @@ import {
   updateStat,
 } from "@/lib/cms"
 
+interface HeroData {
+  id: string
+  title: string
+  description: string
+  introBadge: string
+  videoDuration: string
+  location: string
+  sponsorshipInfo: string
+  openToWork: boolean
+}
+
+interface StatItem {
+  id?: number
+  value: string
+  label: string
+  order: number
+}
+
 function AdminIndexComponent() {
-  const [hero, setHero] = useState<any>({
+  const [hero, setHero] = useState<HeroData>({
+    id: "singleton",
     title: "Meet Abrar",
     description: "60 second intro",
     introBadge: "INTRO",
     videoDuration: "0:60",
     location: "London, UK",
     sponsorshipInfo: "No sponsorship needed",
+    openToWork: true,
   })
-  const [stats, setStats] = useState<Array<any>>([])
+  const [stats, setStats] = useState<StatItem[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadData() {
       const h = await getHero()
-      if (h) setHero(h)
+      if (h) setHero(h as HeroData)
       const s = await getStats()
-      setStats(s)
+      setStats(s as StatItem[])
       setLoading(false)
     }
     loadData()
@@ -42,20 +63,24 @@ function AdminIndexComponent() {
     alert("Hero updated!")
   }
 
-  const handleSaveStat = async (stat: any) => {
+  const handleSaveStat = async (stat: StatItem) => {
     await updateStat({ data: stat })
     const updatedStats = await getStats()
-    setStats(updatedStats)
+    setStats(updatedStats as StatItem[])
   }
 
   const handleAddStat = () => {
     setStats([...stats, { value: "0", label: "New Stat", order: stats.length }])
   }
 
-  const handleDeleteStat = async (id: number) => {
-    if (id) await deleteStat({ data: id })
-    const updatedStats = await getStats()
-    setStats(updatedStats)
+  const handleDeleteStat = async (id?: number) => {
+    if (id) {
+      await deleteStat({ data: id })
+      const updatedStats = await getStats()
+      setStats(updatedStats as StatItem[])
+    } else {
+      setStats(stats.filter((s) => s.id !== undefined))
+    }
   }
 
   if (loading) return <div>Loading...</div>
@@ -81,6 +106,16 @@ function AdminIndexComponent() {
 
         <Card className="space-y-6 border-border bg-card/30 p-6 backdrop-blur-sm">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-background/50 md:col-span-2">
+              <div className="space-y-0.5">
+                <Label className="text-sm font-bold tracking-tight">Open to Work</Label>
+                <p className="text-[10px] text-muted-foreground uppercase font-bold">Show availability badge on landing page</p>
+              </div>
+              <Switch 
+                checked={hero.openToWork} 
+                onCheckedChange={(val) => setHero({ ...hero, openToWork: val })}
+              />
+            </div>
             <div className="space-y-2">
               <Label>Intro Badge Text</Label>
               <Input
@@ -178,22 +213,37 @@ function AdminIndexComponent() {
                   </div>
                 </div>
                 <div className="flex items-center justify-between border-t border-border pt-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDeleteStat(stat.id)}
-                    className="h-8 px-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                  >
-                    <RiDeleteBinLine size={16} />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    onClick={() => handleSaveStat(stat)}
-                    className="h-8 px-4"
-                  >
-                    Save
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Label className="text-[10px] font-bold uppercase text-muted-foreground">Order</Label>
+                    <Input 
+                      type="number" 
+                      className="w-16 h-8 text-xs" 
+                      value={stat.order}
+                      onChange={(e) => {
+                        const newStats = [...stats]
+                        newStats[i].order = parseInt(e.target.value) || 0
+                        setStats(newStats)
+                      }}
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteStat(stat.id)}
+                      className="h-8 px-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    >
+                      <RiDeleteBinLine size={16} />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => handleSaveStat(stat)}
+                      className="h-8 px-4"
+                    >
+                      Save
+                    </Button>
+                  </div>
                 </div>
               </Card>
             ))

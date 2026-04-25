@@ -8,8 +8,15 @@ import {
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import appCss from "../styles.css?url"
 import { Navbar } from "@/components/Navbar"
+import { getUser } from "@/lib/cms"
 
 export const Route = createRootRoute({
+  beforeLoad: async () => {
+    const user = await getUser()
+    return {
+      user,
+    }
+  },
   head: () => ({
     meta: [
       {
