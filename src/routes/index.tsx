@@ -1,19 +1,31 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { Button } from "@/components/ui/button"
+import { lazy, Suspense } from "react"
+
+const Hero = lazy(() => import("@/components/Hero"))
+const Stats = lazy(() => import("@/components/Stats"))
+const Experience = lazy(() => import("@/components/Experience"))
+const Projects = lazy(() => import("@/components/Projects"))
+const Contact = lazy(() => import("@/components/Contact"))
 
 export const Route = createFileRoute("/")({ component: App })
 
 function App() {
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-      </div>
+    <div className="flex flex-col">
+      <Suspense fallback={<div className="min-h-screen bg-background" />}>
+        <Hero />
+        <Stats />
+        <Experience />
+        <Projects />
+        <Contact />
+      </Suspense>
     </div>
   )
 }
+
+
+
+
+
+
+
