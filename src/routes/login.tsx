@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { login, seedAdmin } from "@/lib/cms"
+import { toast } from "sonner"
 
 function LoginPage() {
   const [username, setUsername] = useState("")
@@ -29,10 +30,11 @@ function LoginPage() {
   }
 
   const handleSeed = async () => {
-    console.log("Seed admin")
-    if (confirm("This will initialize the admin user. Continue?")) {
-      await seedAdmin()
-      alert("Admin user created (admin/admin)")
+    try {
+      const res = await seedAdmin()
+      toast.success(res.message)
+    } catch (err) {
+      toast.error("Failed to seed admin user.")
     }
   }
 

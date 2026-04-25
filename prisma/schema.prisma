@@ -17,6 +17,7 @@ model Hero {
   id                String   @id @default("singleton")
   introBadge        String   @default("INTRO")
   videoDuration     String   @default("0:60")
+  videoUrl          String   @default("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
   title             String   @default("Meet Abrar")
   description       String   @default("60 second intro")
   openToWork        Boolean  @default(true)

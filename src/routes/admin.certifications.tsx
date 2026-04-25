@@ -10,6 +10,7 @@ import {
   getCertifications,
   updateCertification,
 } from "@/lib/cms"
+import { toast } from "sonner"
 
 interface CertificationItem {
   id?: number
@@ -37,16 +38,15 @@ function AdminCertificationsComponent() {
     await updateCertification({ data: item })
     const updated = await getCertifications()
     setCerts(updated as CertificationItem[])
-    alert("Certification saved!")
+    toast.success("Certification saved!")
   }
 
   const handleDelete = async (id?: number) => {
     if (id) {
-      if (confirm("Delete this certification?")) {
-        await deleteCertification({ data: id })
-        const updated = await getCertifications()
-        setCerts(updated as CertificationItem[])
-      }
+      await deleteCertification({ data: id })
+      const updated = await getCertifications()
+      setCerts(updated as CertificationItem[])
+      toast.error("Certification removed.")
     } else {
       setCerts(certs.filter((c) => c.id !== undefined))
     }

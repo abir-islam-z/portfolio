@@ -8,7 +8,9 @@ import {
   RiAwardLine,
   RiMenuLine,
   RiCloseLine,
-  RiArrowLeftRightLine,
+  RiSidebarFoldLine,
+  RiSidebarUnfoldLine,
+  RiExternalLinkLine,
 } from "@remixicon/react"
 import {
   Link,
@@ -61,34 +63,48 @@ function AdminLayout() {
           "fixed inset-y-0 left-0 z-40 transition-all duration-300 md:sticky md:top-0 md:h-screen",
           isCollapsed ? "w-20" : "w-64",
           isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
-          "border-r border-border bg-card/50 p-4 backdrop-blur-xl"
+          "border-r border-border bg-card/50 p-4 backdrop-blur-xl flex flex-col"
         )}
       >
         <div className="mb-10 flex items-center justify-between px-2">
-          {!isCollapsed && (
-            <div className="flex items-center gap-3">
+          {!isCollapsed ? (
+            <div className="flex items-center gap-3 animate-in fade-in duration-300">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-xl font-bold text-primary-foreground">
                 AF
               </div>
               <span className="font-bold tracking-tight">Admin</span>
             </div>
-          )}
-          {isCollapsed && (
-            <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
+          ) : (
+            <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground animate-in fade-in duration-300">
               AF
             </div>
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden md:flex h-8 w-8 rounded-full"
-          >
-            <RiArrowLeftRightLine size={16} />
-          </Button>
+          {!isCollapsed && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsCollapsed(true)}
+              className="hidden md:flex h-8 w-8 rounded-full"
+            >
+              <RiSidebarFoldLine size={18} />
+            </Button>
+          )}
         </div>
 
-        <nav className="space-y-1">
+        {isCollapsed && (
+          <div className="mb-6 flex justify-center">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsCollapsed(false)}
+              className="h-8 w-8 rounded-full"
+            >
+              <RiSidebarUnfoldLine size={18} />
+            </Button>
+          </div>
+        )}
+
+        <nav className="space-y-1 flex-1">
           {navItems.map((item) => (
             <Link
               key={item.to}
@@ -96,38 +112,42 @@ function AdminLayout() {
               onClick={() => setIsMobileOpen(false)}
               activeProps={{ className: "bg-primary/10 text-primary" }}
               className={cn(
-                "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors hover:bg-secondary",
-                isCollapsed && "justify-center px-0"
+                "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all hover:bg-secondary group",
+                isCollapsed && "justify-center px-0 mx-auto w-12"
               )}
               title={isCollapsed ? item.label : undefined}
             >
-              <item.icon size={20} />
-              {!isCollapsed && <span>{item.label}</span>}
+              <item.icon size={20} className={cn("shrink-0", isCollapsed && "group-hover:scale-110 transition-transform")} />
+              {!isCollapsed && <span className="truncate">{item.label}</span>}
             </Link>
           ))}
         </nav>
 
-        <div className="absolute right-4 bottom-8 left-4 space-y-2">
+        <div className="mt-auto pt-6 space-y-2">
+          <Link
+            to="/"
+            className={cn(
+              "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground transition-all hover:bg-secondary hover:text-foreground",
+              isCollapsed ? "justify-center px-0 mx-auto w-12" : "justify-start"
+            )}
+            title={isCollapsed ? "Exit to Site" : undefined}
+          >
+            <RiExternalLinkLine size={20} className="shrink-0" />
+            {!isCollapsed && <span className="truncate">Exit to Site</span>}
+          </Link>
+          
           <Button
             variant="ghost"
             onClick={handleLogout}
             className={cn(
-              "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-destructive hover:bg-destructive/10 hover:text-destructive",
-              isCollapsed ? "justify-center px-0" : "justify-start"
+              "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-destructive transition-all hover:bg-destructive/10 hover:text-destructive",
+              isCollapsed ? "justify-center px-0 mx-auto w-12" : "justify-start"
             )}
             title={isCollapsed ? "Logout" : undefined}
           >
-            <RiLogoutBoxLine size={20} />
-            {!isCollapsed && <span>Logout</span>}
+            <RiLogoutBoxLine size={20} className="shrink-0" />
+            {!isCollapsed && <span className="truncate">Logout</span>}
           </Button>
-          {!isCollapsed && (
-            <Link
-              to="/"
-              className="flex items-center justify-center gap-2 rounded-lg border border-border px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-colors hover:bg-secondary"
-            >
-              Exit Dashboard
-            </Link>
-          )}
         </div>
       </aside>
 

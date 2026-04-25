@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { deleteProject, getProjects, updateProject } from "@/lib/cms"
+import { toast } from "sonner"
 
 interface ProjectItem {
   id?: number
@@ -43,16 +44,15 @@ function AdminProjectsComponent() {
     await updateProject({ data: item })
     const updated = await getProjects()
     setProjects(updated as ProjectItem[])
-    alert("Project saved!")
+    toast.success(`Project "${item.title}" saved!`)
   }
 
   const handleDelete = async (id?: number) => {
     if (id) {
-      if (confirm("Delete this project?")) {
-        await deleteProject({ data: id })
-        const updated = await getProjects()
-        setProjects(updated as ProjectItem[])
-      }
+      await deleteProject({ data: id })
+      const updated = await getProjects()
+      setProjects(updated as ProjectItem[])
+      toast.error("Project deleted.")
     } else {
       setProjects(projects.filter((p) => p.id !== undefined))
     }

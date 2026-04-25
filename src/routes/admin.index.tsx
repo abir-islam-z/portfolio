@@ -14,6 +14,7 @@ import {
   updateHero,
   updateStat,
 } from "@/lib/cms"
+import { toast } from "sonner"
 
 interface HeroData {
   id: string
@@ -21,6 +22,7 @@ interface HeroData {
   description: string
   introBadge: string
   videoDuration: string
+  videoUrl: string
   location: string
   sponsorshipInfo: string
   openToWork: boolean
@@ -60,7 +62,7 @@ function AdminIndexComponent() {
 
   const handleSaveHero = async () => {
     await updateHero({ data: hero })
-    alert("Hero updated!")
+    toast.success("Hero updated successfully!")
   }
 
   const handleSaveStat = async (stat: StatItem) => {
@@ -132,6 +134,16 @@ function AdminIndexComponent() {
                 onChange={(e) =>
                   setHero({ ...hero, videoDuration: e.target.value })
                 }
+              />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label>Video URL (YouTube/Vimeo/Direct Link)</Label>
+              <Input
+                value={hero.videoUrl}
+                onChange={(e) =>
+                  setHero({ ...hero, videoUrl: e.target.value })
+                }
+                placeholder="https://www.youtube.com/watch?v=..."
               />
             </div>
             <div className="space-y-2 md:col-span-2">

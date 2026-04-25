@@ -11,6 +11,7 @@ import {
   getTestimonials,
   updateTestimonial,
 } from "@/lib/cms"
+import { toast } from "sonner"
 
 interface TestimonialItem {
   id?: number
@@ -38,16 +39,15 @@ function AdminTestimonialsComponent() {
     await updateTestimonial({ data: item })
     const updated = await getTestimonials()
     setTestimonials(updated as TestimonialItem[])
-    alert("Testimonial saved!")
+    toast.success("Testimonial saved!")
   }
 
   const handleDelete = async (id?: number) => {
     if (id) {
-      if (confirm("Delete this testimonial?")) {
-        await deleteTestimonial({ data: id })
-        const updated = await getTestimonials()
-        setTestimonials(updated as TestimonialItem[])
-      }
+      await deleteTestimonial({ data: id })
+      const updated = await getTestimonials()
+      setTestimonials(updated as TestimonialItem[])
+      toast.error("Testimonial removed.")
     } else {
       setTestimonials(testimonials.filter((t) => t.id !== undefined))
     }

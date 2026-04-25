@@ -4,11 +4,13 @@ import {
   Outlet,
   Scripts,
   createRootRoute,
+  useLocation,
 } from "@tanstack/react-router"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import appCss from "../styles.css?url"
 import { Navbar } from "@/components/Navbar"
 import { getUser } from "@/lib/cms"
+import { Toaster } from "sonner"
 
 export const Route = createRootRoute({
   beforeLoad: async () => {
@@ -42,15 +44,18 @@ export const Route = createRootRoute({
     ],
   }),
   notFoundComponent: () => (
-    <main className="container mx-auto p-4 pt-16">
-      <h1>404</h1>
-      <p>The requested page could not be found.</p>
+    <main className="container mx-auto p-4 pt-16 text-center">
+      <h1 className="text-4xl font-bold mb-4">404</h1>
+      <p className="text-muted-foreground">The requested page could not be found.</p>
     </main>
   ),
   component: RootDocument,
 })
 
 function RootDocument() {
+  const location = useLocation()
+  const isAdmin = location.pathname.startsWith("/admin")
+
   return (
     <html lang="en">
       <head>
@@ -58,10 +63,11 @@ function RootDocument() {
       </head>
       <body>
         <div className="flex min-h-screen flex-col">
-          <Navbar />
-          <main className="flex-1">
+          {!isAdmin && <Navbar />}
+          <main className={isAdmin ? "flex-1" : "flex-1"}>
             <Outlet />
           </main>
+          <Toaster position="top-center" richColors />
         </div>
         <TanStackDevtools
           config={{

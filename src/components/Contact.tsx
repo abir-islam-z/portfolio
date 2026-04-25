@@ -12,6 +12,7 @@ import { Input } from "./ui/input"
 import { Textarea } from "./ui/textarea"
 import { Label } from "./ui/label"
 import { submitContact } from "@/lib/cms"
+import { toast } from "sonner"
 
 export default function Contact() {
   const [pending, setPending] = useState(false)
@@ -27,9 +28,10 @@ export default function Contact() {
       await submitContact({ data })
       setSuccess(true)
       e.currentTarget.reset()
+      toast.success("Message sent! I'll get back to you soon.")
     } catch (err) {
       console.error(err)
-      alert("Something went wrong. Please try again.")
+      toast.error("Something went wrong. Please try again later.")
     } finally {
       setPending(false)
     }

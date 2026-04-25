@@ -18,10 +18,12 @@ const loginSchema = z.object({
 const heroSchema = z.object({
   introBadge: z.string().optional(),
   videoDuration: z.string().optional(),
+  videoUrl: z.string().optional(),
   title: z.string().optional(),
   description: z.string().optional(),
   location: z.string().optional(),
   sponsorshipInfo: z.string().optional(),
+  openToWork: z.boolean().optional(),
 })
 
 const statSchema = z.object({
@@ -151,6 +153,7 @@ export const getHero = createServerFn({ method: "GET" }).handler(async () => {
       title: "Meet Abrar",
       description: "60 second intro",
       videoDuration: "0:60",
+      videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       location: "London, UK",
       sponsorshipInfo: "No sponsorship needed",
       openToWork: true,

@@ -38,7 +38,7 @@ export default function Testimonials() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {testimonials.map((item, i) => (
             <Card key={i} className="p-6 md:p-8 bg-background border-border relative group hover:border-primary/20 transition-all rounded-[24px] md:rounded-[32px]">
-              <RiDoubleQuotesL className="text-primary/10 absolute top-4 right-6 md:top-6 md:right-8" size={40} className="md:size-12" />
+              <RiDoubleQuotesL className="text-primary/10 absolute top-4 right-6 md:top-6 md:right-8 size-10 md:size-12" />
               <div className="space-y-5 md:space-y-6 relative z-10">
                 <p className="text-sm md:text-base text-muted-foreground leading-relaxed italic">"{item.content}"</p>
                 <div className="flex items-center gap-3 md:gap-4">

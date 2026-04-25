@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { deleteExperience, getExperience, updateExperience } from "@/lib/cms"
+import { toast } from "sonner"
 
 interface ExperienceItem {
   id?: number
@@ -35,16 +36,15 @@ function AdminExperienceComponent() {
     await updateExperience({ data: item })
     const updated = await getExperience()
     setExperience(updated as ExperienceItem[])
-    alert("Experience saved!")
+    toast.success("Experience saved!")
   }
 
   const handleDelete = async (id?: number) => {
     if (id) {
-      if (confirm("Delete this entry?")) {
-        await deleteExperience({ data: id })
-        const updated = await getExperience()
-        setExperience(updated as ExperienceItem[])
-      }
+      await deleteExperience({ data: id })
+      const updated = await getExperience()
+      setExperience(updated as ExperienceItem[])
+      toast.error("Experience entry removed.")
     } else {
       setExperience(experience.filter((e) => e.id !== undefined))
     }

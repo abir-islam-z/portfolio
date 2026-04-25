@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { RiPlayFill } from "@remixicon/react"
+import { RiPlayFill, RiCloseLine } from "@remixicon/react"
 import { Badge } from "./ui/badge"
 import { Button } from "./ui/button"
 import { getHero } from "@/lib/cms"
@@ -9,6 +9,7 @@ interface HeroData {
   description: string
   introBadge: string
   videoDuration: string
+  videoUrl: string
   location: string
   sponsorshipInfo: string
   openToWork: boolean
@@ -19,6 +20,7 @@ const FALLBACK_HERO: HeroData = {
   description: "60 second intro",
   introBadge: "INTRO",
   videoDuration: "0:60",
+  videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
   location: "London, UK",
   sponsorshipInfo: "No sponsorship needed",
   openToWork: true,
@@ -27,6 +29,7 @@ const FALLBACK_HERO: HeroData = {
 export default function Hero() {
   const [particles, setParticles] = useState<{ left: string; top: string; delay: string; duration: string }[]>([])
   const [data, setData] = useState<HeroData>(FALLBACK_HERO)
+  const [isPlaying, setIsPlaying] = useState(false)
 
   useEffect(() => {
     const p = [...Array(20)].map(() => ({
@@ -48,56 +51,95 @@ export default function Hero() {
     loadHero()
   }, [])
 
+  // Helper to parse YouTube/Vimeo URLs for embedding
+  const getEmbedUrl = (url: string) => {
+    if (!url) return "";
+    if (url.includes("youtube.com") || url.includes("youtu.be")) {
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}?autoplay=1` : url;
+    }
+    if (url.includes("vimeo.com")) {
+      const regExp = /vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/(?:[^\/]*)\/videos\/|album\/(?:\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/;
+      const match = url.match(regExp);
+      return match ? `https://player.vimeo.com/video/${match[1]}?autoplay=1` : url;
+    }
+    return url;
+  }
+
   return (
     <section className="relative pt-24 pb-16 md:pt-32 md:pb-20 px-4 md:px-6 overflow-hidden">
       {/* Exact Video Banner Container */}
-      <div className="relative max-w-6xl mx-auto h-80 md:h-120 rounded-[24px] md:rounded-[32px] overflow-hidden bg-secondary border border-border shadow-2xl group">
-        {/* Particle Animation Background */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-linear-to-b from-primary/10 via-transparent to-transparent opacity-50" />
-          <div className="absolute inset-0 grid-overlay opacity-20" />
-          
-          {particles.map((p, i) => (
-            <div 
-              key={i}
-              className="particle animate-float"
-              style={{
-                left: p.left,
-                top: p.top,
-                animationDelay: p.delay,
-                animationDuration: p.duration
-              }}
+      <div className="relative max-w-6xl mx-auto h-80 md:h-120 rounded-[24px] md:rounded-[32px] overflow-hidden bg-black border border-border shadow-2xl group transition-all duration-500">
+        
+        {!isPlaying ? (
+          <>
+            {/* Particle Animation Background */}
+            <div className="absolute inset-0 bg-secondary">
+              <div className="absolute inset-0 bg-linear-to-b from-primary/10 via-transparent to-transparent opacity-50" />
+              <div className="absolute inset-0 grid-overlay opacity-20" />
+              
+              {particles.map((p, i) => (
+                <div 
+                  key={i}
+                  className="particle animate-float"
+                  style={{
+                    left: p.left,
+                    top: p.top,
+                    animationDelay: p.delay,
+                    animationDuration: p.duration
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Badges */}
+            <div className="absolute top-4 left-4 md:top-8 md:left-8 flex items-center gap-2">
+              <Badge variant="secondary" className="bg-background/40 backdrop-blur-md border-border text-[9px] md:text-[10px] tracking-widest uppercase py-1 px-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-destructive animate-pulse mr-2" />
+                {data.introBadge}
+              </Badge>
+            </div>
+
+            <div className="absolute bottom-4 right-4 md:bottom-8 md:right-8">
+              <Badge variant="secondary" className="bg-background/40 backdrop-blur-md border-border text-[9px] md:text-[10px] tracking-widest py-1 px-2">
+                {data.videoDuration}
+              </Badge>
+            </div>
+
+            {/* Play Button & Content */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 md:gap-6 px-4">
+              <Button 
+                size="icon" 
+                onClick={() => setIsPlaying(true)}
+                className="w-16 h-16 md:w-20 md:h-20 rounded-full shadow-[0_0_40px_rgba(0,112,243,0.4)] hover:scale-110 transition-transform active:scale-95 bg-primary hover:bg-primary/90"
+              >
+                <RiPlayFill size={32} className="md:size-[40px]" fill="currentColor" />
+              </Button>
+              <div className="text-center">
+                <h2 className="text-lg md:text-2xl font-bold mb-1 text-white">{data.title}</h2>
+                <p className="text-xs md:text-sm text-white/60 font-medium max-w-[200px] md:max-w-none">{data.description}</p>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="relative w-full h-full animate-in fade-in duration-500">
+            <iframe
+              src={getEmbedUrl(data.videoUrl)}
+              className="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
             />
-          ))}
-        </div>
-
-        {/* Badges */}
-        <div className="absolute top-4 left-4 md:top-8 md:left-8 flex items-center gap-2">
-          <Badge variant="secondary" className="bg-background/40 backdrop-blur-md border-border text-[9px] md:text-[10px] tracking-widest uppercase py-1 px-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-destructive animate-pulse mr-2" />
-            {data.introBadge}
-          </Badge>
-        </div>
-
-        <div className="absolute bottom-4 right-4 md:bottom-8 md:right-8">
-          <Badge variant="secondary" className="bg-background/40 backdrop-blur-md border-border text-[9px] md:text-[10px] tracking-widest py-1 px-2">
-            {data.videoDuration}
-          </Badge>
-        </div>
-
-        {/* Play Button & Content */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 md:gap-6 px-4">
-          <Button 
-            size="icon" 
-            className="w-16 h-16 md:w-20 md:h-20 rounded-full shadow-[0_0_40px_rgba(0,112,243,0.4)] hover:scale-110 transition-transform"
-          >
-            <RiPlayFill size={32} className="md:size-[40px]" fill="currentColor" />
-          </Button>
-          <div className="text-center">
-            <h2 className="text-lg md:text-2xl font-bold mb-1">{data.title}</h2>
-            <p className="text-xs md:text-sm text-muted-foreground font-medium max-w-[200px] md:max-w-none">{data.description}</p>
+            <Button 
+              variant="secondary" 
+              size="icon" 
+              onClick={() => setIsPlaying(false)}
+              className="absolute top-4 right-4 rounded-full bg-background/20 backdrop-blur-md hover:bg-background/40 text-white border-white/20 z-10"
+            >
+              <RiCloseLine size={24} />
+            </Button>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Pill Badges Below */}
