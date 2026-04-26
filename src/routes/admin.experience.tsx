@@ -1,13 +1,13 @@
 import { RiAddLine, RiDeleteBinLine, RiSaveLine } from "@remixicon/react"
 import { createFileRoute } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { deleteExperience, getExperience, updateExperience } from "@/lib/cms"
-import { toast } from "sonner"
 
 interface ExperienceItem {
   id?: number
@@ -20,33 +20,43 @@ interface ExperienceItem {
 }
 
 function AdminExperienceComponent() {
-  const [experience, setExperience] = useState<ExperienceItem[]>([])
+  const [experience, setExperience] = useState<Array<ExperienceItem>>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadData() {
       const data = await getExperience()
-      setExperience(data as ExperienceItem[])
+      setExperience(data as Array<ExperienceItem>)
       setLoading(false)
     }
     loadData()
   }, [])
 
   const handleSave = async (item: ExperienceItem) => {
-    await updateExperience({ data: item })
-    const updated = await getExperience()
-    setExperience(updated as ExperienceItem[])
-    toast.success("Experience saved!")
+    try {
+      await updateExperience({ data: item })
+      const updated = await getExperience()
+      setExperience(updated as Array<ExperienceItem>)
+      toast.success("Experience saved!")
+    } catch (error: any) {
+      console.error("Experience save failed:", error)
+      toast.error(error?.message || "Failed to save experience")
+    }
   }
 
   const handleDelete = async (id?: number) => {
-    if (id) {
-      await deleteExperience({ data: id })
-      const updated = await getExperience()
-      setExperience(updated as ExperienceItem[])
-      toast.error("Experience entry removed.")
-    } else {
-      setExperience(experience.filter((e) => e.id !== undefined))
+    try {
+      if (id) {
+        await deleteExperience({ data: id })
+        const updated = await getExperience()
+        setExperience(updated as Array<ExperienceItem>)
+        toast.success("Experience entry removed.")
+      } else {
+        setExperience(experience.filter((e) => e.id !== undefined))
+      }
+    } catch (error: any) {
+      console.error("Experience delete failed:", error)
+      toast.error(error?.message || "Failed to remove experience")
     }
   }
 

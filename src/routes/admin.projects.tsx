@@ -7,13 +7,13 @@ import {
   RiStarFill,
   RiStarLine,
 } from "@remixicon/react"
+import { toast } from "sonner"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { deleteProject, getProjects, updateProject } from "@/lib/cms"
-import { toast } from "sonner"
 
 interface ProjectItem {
   id?: number
@@ -28,33 +28,43 @@ interface ProjectItem {
 }
 
 function AdminProjectsComponent() {
-  const [projects, setProjects] = useState<ProjectItem[]>([])
+  const [projects, setProjects] = useState<Array<ProjectItem>>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadData() {
       const data = await getProjects()
-      setProjects(data as ProjectItem[])
+      setProjects(data as Array<ProjectItem>)
       setLoading(false)
     }
     loadData()
   }, [])
 
   const handleSave = async (item: ProjectItem) => {
-    await updateProject({ data: item })
-    const updated = await getProjects()
-    setProjects(updated as ProjectItem[])
-    toast.success(`Project "${item.title}" saved!`)
+    try {
+      await updateProject({ data: item })
+      const updated = await getProjects()
+      setProjects(updated as Array<ProjectItem>)
+      toast.success(`Project "${item.title}" saved!`)
+    } catch (error: any) {
+      console.error("Project save failed:", error)
+      toast.error(error?.message || "Failed to save project")
+    }
   }
 
   const handleDelete = async (id?: number) => {
-    if (id) {
-      await deleteProject({ data: id })
-      const updated = await getProjects()
-      setProjects(updated as ProjectItem[])
-      toast.error("Project deleted.")
-    } else {
-      setProjects(projects.filter((p) => p.id !== undefined))
+    try {
+      if (id) {
+        await deleteProject({ data: id })
+        const updated = await getProjects()
+        setProjects(updated as Array<ProjectItem>)
+        toast.success("Project deleted.")
+      } else {
+        setProjects(projects.filter((p) => p.id !== undefined))
+      }
+    } catch (error: any) {
+      console.error("Project delete failed:", error)
+      toast.error(error?.message || "Failed to delete project")
     }
   }
 

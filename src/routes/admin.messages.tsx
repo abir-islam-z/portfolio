@@ -13,13 +13,13 @@ interface ContactMessage {
 }
 
 function AdminMessagesComponent() {
-  const [messages, setMessages] = useState<ContactMessage[]>([])
+  const [messages, setMessages] = useState<Array<ContactMessage>>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadData() {
       const data = await getContactMessages()
-      setMessages(data as ContactMessage[])
+      setMessages(data as Array<ContactMessage>)
       setLoading(false)
     }
     loadData()

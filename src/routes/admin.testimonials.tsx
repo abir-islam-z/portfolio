@@ -36,20 +36,30 @@ function AdminTestimonialsComponent() {
   }, [])
 
   const handleSave = async (item: TestimonialItem) => {
-    await updateTestimonial({ data: item })
-    const updated = await getTestimonials()
-    setTestimonials(updated as TestimonialItem[])
-    toast.success("Testimonial saved!")
+    try {
+      await updateTestimonial({ data: item })
+      const updated = await getTestimonials()
+      setTestimonials(updated as TestimonialItem[])
+      toast.success("Testimonial saved!")
+    } catch (error: any) {
+      console.error("Testimonial save failed:", error)
+      toast.error(error?.message || "Failed to save testimonial")
+    }
   }
 
   const handleDelete = async (id?: number) => {
-    if (id) {
-      await deleteTestimonial({ data: id })
-      const updated = await getTestimonials()
-      setTestimonials(updated as TestimonialItem[])
-      toast.error("Testimonial removed.")
-    } else {
-      setTestimonials(testimonials.filter((t) => t.id !== undefined))
+    try {
+      if (id) {
+        await deleteTestimonial({ data: id })
+        const updated = await getTestimonials()
+        setTestimonials(updated as TestimonialItem[])
+        toast.success("Testimonial removed.")
+      } else {
+        setTestimonials(testimonials.filter((t) => t.id !== undefined))
+      }
+    } catch (error: any) {
+      console.error("Testimonial delete failed:", error)
+      toast.error(error?.message || "Failed to remove testimonial")
     }
   }
 

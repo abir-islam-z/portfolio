@@ -85,3 +85,14 @@ model Certification {
   order     Int      @default(0)
   updatedAt DateTime @updatedAt
 }
+
+model Footer {
+  id           String   @id @default("singleton")
+  bio          String   @default("Data Scientist specializing in Generative AI, RAG, and NLP. Based in London, UK.")
+  email        String   @default("hello@abrarfahim.co.uk")
+  linkedin     String   @default("#")
+  github       String   @default("#")
+  twitter      String   @default("#")
+  availability String   @default("Open for Opportunities")
+  updatedAt    DateTime @updatedAt
+}

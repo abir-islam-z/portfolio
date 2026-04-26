@@ -1,21 +1,13 @@
 import { createServerFn } from "@tanstack/react-start"
-import bcrypt from "bcryptjs"
 import { z } from "zod"
-import {
-  deleteCookie,
-  getCookie,
-  setCookie,
-} from "@tanstack/react-start/server"
-import { decrypt, encrypt } from "./auth"
-import { db } from "./db"
 
-// --- SCHEMAS ---
-const loginSchema = z.object({
+// --- SCHEMAS (Shared) ---
+export const loginSchema = z.object({
   username: z.string().min(1),
   password: z.string().min(1),
 })
 
-const heroSchema = z.object({
+export const heroSchema = z.object({
   introBadge: z.string().optional(),
   videoDuration: z.string().optional(),
   videoUrl: z.string().optional(),
@@ -26,14 +18,14 @@ const heroSchema = z.object({
   openToWork: z.boolean().optional(),
 })
 
-const statSchema = z.object({
+export const statSchema = z.object({
   id: z.number().optional(),
   value: z.string(),
   label: z.string(),
   order: z.number().default(0),
 })
 
-const experienceSchema = z.object({
+export const experienceSchema = z.object({
   id: z.number().optional(),
   role: z.string(),
   company: z.string(),
@@ -43,7 +35,7 @@ const experienceSchema = z.object({
   order: z.number().default(0),
 })
 
-const projectSchema = z.object({
+export const projectSchema = z.object({
   id: z.number().optional(),
   title: z.string(),
   description: z.string(),
@@ -55,7 +47,7 @@ const projectSchema = z.object({
   order: z.number().default(0),
 })
 
-const testimonialSchema = z.object({
+export const testimonialSchema = z.object({
   id: z.number().optional(),
   name: z.string(),
   role: z.string(),
@@ -64,7 +56,7 @@ const testimonialSchema = z.object({
   order: z.number().default(0),
 })
 
-const certificationSchema = z.object({
+export const certificationSchema = z.object({
   id: z.number().optional(),
   title: z.string(),
   issuer: z.string(),
@@ -73,252 +65,179 @@ const certificationSchema = z.object({
   order: z.number().default(0),
 })
 
-const contactSchema = z.object({
-  name: z.string(),
-  email: z.string().email(),
-  message: z.string(),
+export const contactSchema = z.object({
+  name: z.string().min(1, "Name is required").trim(),
+  email: z.string().email("Invalid email address").trim(),
+  message: z.string().min(1, "Message cannot be empty").trim(),
+})
+
+export const footerSchema = z.object({
+  id: z.string().optional(),
+  bio: z.string().default(""),
+  email: z.string().email("Invalid email address").or(z.literal("")).default(""),
+  linkedin: z.string().default(""),
+  github: z.string().default(""),
+  twitter: z.string().default(""),
+  availability: z.string().default(""),
 })
 
 // --- AUTH ---
 export const login = createServerFn({ method: "POST" })
   .inputValidator(loginSchema)
   .handler(async ({ data }) => {
-    const { username, password } = data
-    const user = await db.user.findUnique({ where: { username } })
-
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw new Error("Invalid credentials")
-    }
-
-    const session = await encrypt({ userId: user.id, username: user.username })
-    setCookie("session", session, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 2, // 2 hours
-    })
-
-    return { success: true }
+    const { loginServer } = await import("./cms.server")
+    return loginServer(data)
   })
 
 export const logout = createServerFn({ method: "POST" }).handler(async () => {
-  await deleteCookie("session")
-  return { success: true }
+  const { logoutServer } = await import("./cms.server")
+  return logoutServer()
 })
 
 export const getUser = createServerFn({ method: "GET" }).handler(async () => {
-  const session = getCookie("session")
-  if (!session) return null
-  try {
-    const payload = await decrypt(session)
-    return payload
-  } catch (e) {
-    return null
-  }
+  const { getUserServer } = await import("./cms.server")
+  return getUserServer()
 })
 
-// Temporary seed function - ONLY run once
-export const seedAdmin = createServerFn({ method: "POST" }).handler(
-  async () => {
-    const existing = await db.user.findFirst()
-    if (existing) return { message: "Admin already exists" }
-
-    const hashedPassword = await bcrypt.hash("admin", 10)
-    await db.user.create({
-      data: {
-        username: "admin",
-        password: hashedPassword,
-      },
-    })
-    return { message: "Admin created (admin/admin). Change this immediately!" }
-  }
-)
-
-async function checkAuth() {
-  const user = await getUser()
-  if (!user) throw new Error("Unauthorized")
-  return user
-}
+export const seedAdmin = createServerFn({ method: "POST" }).handler(async () => {
+  const { seedAdminServer } = await import("./cms.server")
+  return seedAdminServer()
+})
 
 // --- HERO & GLOBAL ---
 export const getHero = createServerFn({ method: "GET" }).handler(async () => {
-  let hero = await db.hero.findUnique({
-    where: { id: "singleton" },
-  })
-  if (!hero) {
-    hero = {
-      id: "singleton",
-      introBadge: "INTRO",
-      title: "Meet Abrar",
-      description: "60 second intro",
-      videoDuration: "0:60",
-      videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      location: "London, UK",
-      sponsorshipInfo: "No sponsorship needed",
-      openToWork: true,
-      updatedAt: new Date(),
-    }
-  }
-  return hero
+  const { getHeroServer } = await import("./cms.server")
+  return getHeroServer()
 })
 
 export const updateHero = createServerFn({ method: "POST" })
   .inputValidator(heroSchema)
   .handler(async ({ data }) => {
-    await checkAuth()
-    return await db.hero.upsert({
-      where: { id: "singleton" },
-      update: data,
-      create: { id: "singleton", ...data },
-    })
+    const { updateHeroServer } = await import("./cms.server")
+    return updateHeroServer(data)
+  })
+
+export const getFooter = createServerFn({ method: "GET" }).handler(async () => {
+  const { getFooterServer } = await import("./cms.server")
+  return getFooterServer()
+})
+
+export const updateFooter = createServerFn({ method: "POST" })
+  .inputValidator(footerSchema)
+  .handler(async ({ data }) => {
+    const { updateFooterServer } = await import("./cms.server")
+    return updateFooterServer(data)
   })
 
 // --- STATS ---
 export const getStats = createServerFn({ method: "GET" }).handler(async () => {
-  return await db.stat.findMany({
-    orderBy: { order: "asc" },
-  })
+  const { getStatsServer } = await import("./cms.server")
+  return getStatsServer()
 })
 
 export const updateStat = createServerFn({ method: "POST" })
   .inputValidator(statSchema)
   .handler(async ({ data }) => {
-    await checkAuth()
-    const { id, ...rest } = data
-    if (id) {
-      return await db.stat.update({ where: { id }, data: rest })
-    }
-    return await db.stat.create({ data: rest })
+    const { updateStatServer } = await import("./cms.server")
+    return updateStatServer(data)
   })
 
 export const deleteStat = createServerFn({ method: "POST" })
   .inputValidator(z.number())
   .handler(async ({ data: id }) => {
-    await checkAuth()
-    return await db.stat.delete({ where: { id } })
+    const { deleteStatServer } = await import("./cms.server")
+    return deleteStatServer(id)
   })
 
 // --- EXPERIENCE ---
-export const getExperience = createServerFn({ method: "GET" }).handler(
-  async () => {
-    return await db.experience.findMany({
-      orderBy: { order: "asc" },
-    })
-  }
-)
+export const getExperience = createServerFn({ method: "GET" }).handler(async () => {
+  const { getExperienceServer } = await import("./cms.server")
+  return getExperienceServer()
+})
 
 export const updateExperience = createServerFn({ method: "POST" })
   .inputValidator(experienceSchema)
   .handler(async ({ data }) => {
-    await checkAuth()
-    const { id, ...rest } = data
-    if (id) {
-      return await db.experience.update({ where: { id }, data: rest })
-    }
-    return await db.experience.create({ data: rest })
+    const { updateExperienceServer } = await import("./cms.server")
+    return updateExperienceServer(data)
   })
 
 export const deleteExperience = createServerFn({ method: "POST" })
   .inputValidator(z.number())
   .handler(async ({ data: id }) => {
-    await checkAuth()
-    return await db.experience.delete({ where: { id } })
+    const { deleteExperienceServer } = await import("./cms.server")
+    return deleteExperienceServer(id)
   })
 
 // --- PROJECTS ---
-export const getProjects = createServerFn({ method: "GET" }).handler(
-  async () => {
-    return await db.project.findMany({
-      orderBy: { order: "asc" },
-    })
-  }
-)
+export const getProjects = createServerFn({ method: "GET" }).handler(async () => {
+  const { getProjectsServer } = await import("./cms.server")
+  return getProjectsServer()
+})
 
 export const updateProject = createServerFn({ method: "POST" })
   .inputValidator(projectSchema)
   .handler(async ({ data }) => {
-    await checkAuth()
-    const { id, ...rest } = data
-    if (id) {
-      return await db.project.update({ where: { id }, data: rest })
-    }
-    return await db.project.create({ data: rest })
+    const { updateProjectServer } = await import("./cms.server")
+    return updateProjectServer(data)
   })
 
 export const deleteProject = createServerFn({ method: "POST" })
   .inputValidator(z.number())
   .handler(async ({ data: id }) => {
-    await checkAuth()
-    return await db.project.delete({ where: { id } })
+    const { deleteProjectServer } = await import("./cms.server")
+    return deleteProjectServer(id)
   })
 
 // --- CONTACT MESSAGES ---
 export const submitContact = createServerFn({ method: "POST" })
   .inputValidator(contactSchema)
   .handler(async ({ data }) => {
-    return await db.contactMessage.create({ data })
+    const { submitContactServer } = await import("./cms.server")
+    return submitContactServer(data)
   })
 
-export const getContactMessages = createServerFn({ method: "GET" }).handler(
-  async () => {
-    await checkAuth()
-    return await db.contactMessage.findMany({
-      orderBy: { createdAt: "desc" },
-    })
-  }
-)
+export const getContactMessages = createServerFn({ method: "GET" }).handler(async () => {
+  const { getContactMessagesServer } = await import("./cms.server")
+  return getContactMessagesServer()
+})
 
 // --- TESTIMONIALS ---
-export const getTestimonials = createServerFn({ method: "GET" }).handler(
-  async () => {
-    return await db.testimonial.findMany({
-      orderBy: { order: "asc" },
-    })
-  }
-)
+export const getTestimonials = createServerFn({ method: "GET" }).handler(async () => {
+  const { getTestimonialsServer } = await import("./cms.server")
+  return getTestimonialsServer()
+})
 
 export const updateTestimonial = createServerFn({ method: "POST" })
   .inputValidator(testimonialSchema)
   .handler(async ({ data }) => {
-    await checkAuth()
-    const { id, ...rest } = data
-    if (id) {
-      return await db.testimonial.update({ where: { id }, data: rest })
-    }
-    return await db.testimonial.create({ data: rest })
+    const { updateTestimonialServer } = await import("./cms.server")
+    return updateTestimonialServer(data)
   })
 
 export const deleteTestimonial = createServerFn({ method: "POST" })
   .inputValidator(z.number())
   .handler(async ({ data: id }) => {
-    await checkAuth()
-    return await db.testimonial.delete({ where: { id } })
+    const { deleteTestimonialServer } = await import("./cms.server")
+    return deleteTestimonialServer(id)
   })
 
 // --- CERTIFICATIONS ---
-export const getCertifications = createServerFn({ method: "GET" }).handler(
-  async () => {
-    return await db.certification.findMany({
-      orderBy: { order: "asc" },
-    })
-  }
-)
+export const getCertifications = createServerFn({ method: "GET" }).handler(async () => {
+  const { getCertificationsServer } = await import("./cms.server")
+  return getCertificationsServer()
+})
 
 export const updateCertification = createServerFn({ method: "POST" })
   .inputValidator(certificationSchema)
   .handler(async ({ data }) => {
-    await checkAuth()
-    const { id, ...rest } = data
-    if (id) {
-      return await db.certification.update({ where: { id }, data: rest })
-    }
-    return await db.certification.create({ data: rest })
+    const { updateCertificationServer } = await import("./cms.server")
+    return updateCertificationServer(data)
   })
 
 export const deleteCertification = createServerFn({ method: "POST" })
   .inputValidator(z.number())
   .handler(async ({ data: id }) => {
-    await checkAuth()
-    return await db.certification.delete({ where: { id } })
+    const { deleteCertificationServer } = await import("./cms.server")
+    return deleteCertificationServer(id)
   })

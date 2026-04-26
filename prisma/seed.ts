@@ -1,10 +1,9 @@
 import bcrypt from "bcryptjs"
 import "dotenv/config"
-import { db } from "../src/lib/db"
-
-const prisma = db
+import { getDb } from "../src/lib/db.server"
 
 async function main() {
+  const prisma = await getDb()
   console.log("Seeding database...")
 
   // --- Clear existing data ---
@@ -15,6 +14,7 @@ async function main() {
   await prisma.project.deleteMany({})
   await prisma.testimonial.deleteMany({})
   await prisma.certification.deleteMany({})
+  await prisma.footer.deleteMany({})
 
   // --- User ---
   const hashedPassword = await bcrypt.hash("admin", 10)
@@ -159,6 +159,20 @@ async function main() {
     await prisma.certification.create({ data: cert })
   }
 
+  // --- Footer ---
+  await prisma.footer.create({
+    data: {
+      id: "singleton",
+      bio: "Data Scientist specializing in Generative AI, RAG, and NLP. Based in London, UK.",
+      email: "hello@abrarfahim.co.uk",
+      linkedin: "https://linkedin.com",
+      github: "https://github.com",
+      twitter: "https://twitter.com",
+      availability: "Open for Opportunities"
+    }
+  })
+  console.log("Footer seeded.")
+
   console.log("Seeding complete!")
 }
 
@@ -166,7 +180,4 @@ main()
   .catch((e) => {
     console.error("Seeding failed:", e)
     process.exit(1)
-  })
-  .finally(async () => {
-    await prisma.$disconnect()
   })

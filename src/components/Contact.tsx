@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   RiGithubFill,
   RiLinkedinBoxFill,
@@ -11,12 +11,43 @@ import { Card } from "./ui/card"
 import { Input } from "./ui/input"
 import { Textarea } from "./ui/textarea"
 import { Label } from "./ui/label"
-import { submitContact } from "@/lib/cms"
+import { getFooter, submitContact } from "@/lib/cms"
 import { toast } from "sonner"
+
+interface FooterData {
+  bio: string
+  email: string
+  linkedin: string
+  github: string
+  twitter: string
+  availability: string
+}
+
+const FALLBACK_FOOTER: FooterData = {
+  bio: "Data Scientist specializing in Generative AI, RAG, and NLP. Based in London, UK.",
+  email: "hello@abrarfahim.co.uk",
+  linkedin: "#",
+  github: "#",
+  twitter: "#",
+  availability: "Open for Opportunities",
+}
 
 export default function Contact() {
   const [pending, setPending] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [footer, setFooter] = useState<FooterData>(FALLBACK_FOOTER)
+
+  useEffect(() => {
+    async function loadFooter() {
+      try {
+        const data = await getFooter()
+        if (data) setFooter(data as FooterData)
+      } catch (error) {
+        console.error("Failed to fetch footer data.", error)
+      }
+    }
+    loadFooter()
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -25,13 +56,19 @@ export default function Contact() {
     const data = Object.fromEntries(formData.entries())
 
     try {
-      await submitContact({ data })
+      const payload = {
+        name: String(data.name || ""),
+        email: String(data.email || ""),
+        message: String(data.message || ""),
+      }
+      await submitContact({ data: payload })
       setSuccess(true)
       e.currentTarget.reset()
       toast.success("Message sent! I'll get back to you soon.")
-    } catch (err) {
-      console.error(err)
-      toast.error("Something went wrong. Please try again later.")
+    } catch (err: any) {
+      console.error("Submission error:", err)
+      const errorMessage = err?.message || "Something went wrong. Please try again later."
+      toast.error(errorMessage)
     } finally {
       setPending(false)
     }
@@ -56,13 +93,15 @@ export default function Contact() {
 
           <div className="flex flex-col gap-3 md:gap-4">
             <a
-              href="mailto:hello@abrarfahim.co.uk"
+              href={`mailto:${footer.email}`}
               className="text-base md:text-lg font-bold transition-colors hover:text-primary"
             >
-              hello@abrarfahim.co.uk
+              {footer.email}
             </a>
             <a
-              href="#"
+              href={footer.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-base md:text-lg font-bold transition-colors hover:text-primary"
             >
               LinkedIn Profile
@@ -158,8 +197,7 @@ export default function Contact() {
               AF
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground mx-auto md:mx-0 max-w-[250px] md:max-w-none">
-              Data Scientist specializing in Generative AI, RAG, and NLP. Based
-              in London, UK.
+              {footer.bio}
             </p>
           </div>
 
@@ -169,13 +207,15 @@ export default function Contact() {
             </h4>
             <div className="flex flex-col space-y-2">
               <a
-                href="mailto:hello@abrarfahim.co.uk"
+                href={`mailto:${footer.email}`}
                 className="text-sm font-bold transition-colors hover:text-primary"
               >
-                hello@abrarfahim.co.uk
+                {footer.email}
               </a>
               <a
-                href="#"
+                href={footer.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-sm font-bold transition-colors hover:text-primary"
               >
                 LinkedIn Profile
@@ -188,10 +228,10 @@ export default function Contact() {
               Elsewhere
             </h4>
             <div className="flex gap-4 justify-center md:justify-start">
-              <SocialIcon icon={<RiGithubFill />} />
-              <SocialIcon icon={<RiLinkedinBoxFill />} />
-              <SocialIcon icon={<RiTwitterXFill />} />
-              <SocialIcon icon={<RiMailFill />} />
+              <SocialIcon href={footer.github} icon={<RiGithubFill />} />
+              <SocialIcon href={footer.linkedin} icon={<RiLinkedinBoxFill />} />
+              <SocialIcon href={footer.twitter} icon={<RiTwitterXFill />} />
+              <SocialIcon href={`mailto:${footer.email}`} icon={<RiMailFill />} />
             </div>
           </div>
 
@@ -200,7 +240,7 @@ export default function Contact() {
               Availability
             </h4>
             <div className="space-y-1">
-              <p className="text-sm font-bold">Open for Opportunities</p>
+              <p className="text-sm font-bold">{footer.availability}</p>
               <p className="text-xs text-muted-foreground">
                 Full-time & Contract roles
               </p>
@@ -226,14 +266,17 @@ export default function Contact() {
   )
 }
 
-function SocialIcon({ icon }: { icon: React.ReactNode }) {
+function SocialIcon({ icon, href }: { icon: React.ReactNode, href: string }) {
   return (
     <Button
       variant="ghost"
       size="icon"
+      asChild
       className="h-10 w-10 rounded-xl border border-border bg-secondary text-muted-foreground transition-all hover:border-primary/50 hover:text-primary"
     >
-      {icon}
+      <a href={href} target="_blank" rel="noopener noreferrer">
+        {icon}
+      </a>
     </Button>
   )
 }

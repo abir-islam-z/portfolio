@@ -7,10 +7,10 @@ import {
   useLocation,
 } from "@tanstack/react-router"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
+import { Toaster } from "sonner"
 import appCss from "../styles.css?url"
 import { Navbar } from "@/components/Navbar"
 import { getUser } from "@/lib/cms"
-import { Toaster } from "sonner"
 
 export const Route = createRootRoute({
   beforeLoad: async () => {

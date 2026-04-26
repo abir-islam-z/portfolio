@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
 import { RiAddLine, RiDeleteBinLine, RiSaveLine } from "@remixicon/react"
+import { toast } from "sonner"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -10,7 +11,6 @@ import {
   getCertifications,
   updateCertification,
 } from "@/lib/cms"
-import { toast } from "sonner"
 
 interface CertificationItem {
   id?: number
@@ -22,33 +22,43 @@ interface CertificationItem {
 }
 
 function AdminCertificationsComponent() {
-  const [certs, setCerts] = useState<CertificationItem[]>([])
+  const [certs, setCerts] = useState<Array<CertificationItem>>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadData() {
       const data = await getCertifications()
-      setCerts(data as CertificationItem[])
+      setCerts(data as Array<CertificationItem>)
       setLoading(false)
     }
     loadData()
   }, [])
 
   const handleSave = async (item: CertificationItem) => {
-    await updateCertification({ data: item })
-    const updated = await getCertifications()
-    setCerts(updated as CertificationItem[])
-    toast.success("Certification saved!")
+    try {
+      await updateCertification({ data: item })
+      const updated = await getCertifications()
+      setCerts(updated as Array<CertificationItem>)
+      toast.success("Certification saved!")
+    } catch (error: any) {
+      console.error("Certification save failed:", error)
+      toast.error(error?.message || "Failed to save certification")
+    }
   }
 
   const handleDelete = async (id?: number) => {
-    if (id) {
-      await deleteCertification({ data: id })
-      const updated = await getCertifications()
-      setCerts(updated as CertificationItem[])
-      toast.error("Certification removed.")
-    } else {
-      setCerts(certs.filter((c) => c.id !== undefined))
+    try {
+      if (id) {
+        await deleteCertification({ data: id })
+        const updated = await getCertifications()
+        setCerts(updated as Array<CertificationItem>)
+        toast.success("Certification removed.")
+      } else {
+        setCerts(certs.filter((c) => c.id !== undefined))
+      }
+    } catch (error: any) {
+      console.error("Certification delete failed:", error)
+      toast.error(error?.message || "Failed to remove certification")
     }
   }
 
