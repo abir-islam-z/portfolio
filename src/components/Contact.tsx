@@ -241,9 +241,9 @@ export default function Contact() {
             </h4>
             <div className="space-y-1">
               <p className="text-sm font-bold">{footer.availability}</p>
-              <p className="text-xs text-muted-foreground">
+              {/* <p className="text-xs text-muted-foreground">
                 Full-time & Contract roles
-              </p>
+              </p> */}
             </div>
           </div>
         </div>
