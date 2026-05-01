@@ -17,35 +17,35 @@ async function main() {
   await prisma.footer.deleteMany({})
 
   // --- User ---
-  const hashedPassword = await bcrypt.hash("ragnarok2550@@!!", 10)
+  const hashedPassword = await bcrypt.hash("password123", 10)
   await prisma.user.create({
     data: {
-      username: "fouzia",
+      username: "admin",
       password: hashedPassword
     }
   })
-  console.log("User 'fouzia' with secure password created.")
+  console.log("User 'admin' with password 'password123' created.")
 
   // --- Hero ---
   await prisma.hero.create({
     data: {
       id: "singleton",
-      introBadge: "DATA SCIENTIST & AI ENGINEER",
-      title: "I build intelligent systems that turn data into impact.",
-      description: "Specializing in LLMs, RAG, and NLP. I bridge the gap between complex research and scalable production applications.",
+      introBadge: "FULL STACK DEVELOPER & DESIGNER",
+      title: "I build exceptional digital experiences for the web.",
+      description: "Specializing in React, Node.js, and modern cloud architecture. I focus on creating scalable, performant, and user-centric applications.",
       videoDuration: "0:45",
-      location: "London, UK",
-      sponsorshipInfo: "British Citizen (No sponsorship required)",
+      location: "Silicon Valley, CA",
+      sponsorshipInfo: "Available for remote & on-site opportunities",
       openToWork: true
     }
   })
 
   // --- Stats ---
   const stats = [
-    { label: "Years Experience", value: "4+", order: 1 },
-    { label: "Projects Completed", value: "25+", order: 2 },
-    { label: "LLM Models Deployed", value: "10+", order: 3 },
-    { label: "Code Quality", value: "99%", order: 4 }
+    { label: "Years Experience", value: "5+", order: 1 },
+    { label: "Projects Completed", value: "30+", order: 2 },
+    { label: "Happy Clients", value: "20+", order: 3 },
+    { label: "Commits This Year", value: "1K+", order: 4 }
   ]
   for (const stat of stats) {
     await prisma.stat.create({ data: stat })
@@ -54,27 +54,27 @@ async function main() {
   // --- Experience ---
   const experiences = [
     {
-      company: "Periscope",
-      role: "Senior AI Engineer",
-      period: "2023 - Present",
-      description: "Leading the development of agentic coding systems and custom RAG architectures for enterprise clients.",
-      skills: "Python, PyTorch, LangChain, OpenAI, Pinecone",
+      company: "Tech Giant",
+      role: "Senior Software Engineer",
+      period: "2022 - Present",
+      description: "Leading frontend development for a high-traffic SaaS platform. Implementing micro-frontends and improving CI/CD pipelines.",
+      skills: "React, TypeScript, AWS, Next.js",
       order: 1
     },
     {
-      company: "TechNexus",
-      role: "Data Scientist",
-      period: "2021 - 2023",
-      description: "Developed predictive models for financial risk assessment and automated NLP pipelines for document processing.",
-      skills: "Python, Scikit-learn, BERT, SQL, AWS",
+      company: "Startup Co",
+      role: "Full Stack Developer",
+      period: "2019 - 2022",
+      description: "Architected and built a real-time collaboration tool from scratch. Scaled the backend to handle 50k concurrent users.",
+      skills: "Node.js, PostgreSQL, Redis, Docker",
       order: 2
     },
     {
-      company: "London School of Economics",
-      role: "Research Assistant",
-      period: "2020 - 2021",
-      description: "Conducted statistical analysis on large-scale socioeconomic datasets using Python and R.",
-      skills: "R, Python, Stata, Econometrics",
+      company: "Digital Agency",
+      role: "Junior Web Developer",
+      period: "2018 - 2019",
+      description: "Developed custom WordPress themes and interactive web components for various client projects.",
+      skills: "JavaScript, PHP, CSS, HTML",
       order: 3
     }
   ]
@@ -85,33 +85,33 @@ async function main() {
   // --- Projects ---
   const projects = [
     {
-      title: "RAG Optimizer",
-      description: "A tool to optimize vector database retrieval using reranking and hybrid search methods.",
-      image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800",
-      tags: "NLP, LangChain, Pinecone",
+      title: "Task Management Pro",
+      description: "A collaborative task management application with real-time updates and team analytics.",
+      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800",
+      tags: "React, Firebase, Tailwind",
       isFeatured: true,
-      link: "https://github.com/abir-islam-z/rag-optimizer",
-      github: "https://github.com/abir-islam-z/rag-optimizer",
+      link: "https://github.com/johndoe/task-pro",
+      github: "https://github.com/johndoe/task-pro",
       order: 1
     },
     {
-      title: "Enterprise Data Bot",
-      description: "Custom AI agent for querying internal company documentation with high precision.",
-      image: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&q=80&w=800",
-      tags: "Enterprise, OpenAI, Python",
+      title: "E-commerce Engine",
+      description: "A headless e-commerce solution with integrated payment gateways and inventory management.",
+      image: "https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&q=80&w=800",
+      tags: "Next.js, Stripe, Shopify",
       isFeatured: true,
-      link: "https://github.com/abir-islam-z/data-bot",
-      github: "https://github.com/abir-islam-z/data-bot",
+      link: "https://github.com/johndoe/shop-engine",
+      github: "https://github.com/johndoe/shop-engine",
       order: 2
     },
     {
-      title: "Sentiment Pulse",
-      description: "Real-time sentiment analysis dashboard for tracking brand perception across social media.",
-      image: "https://images.unsplash.com/photo-1551288049-bbdac8a28a1e?auto=format&fit=crop&q=80&w=800",
-      tags: "Dashboard, React, FastAPI",
+      title: "Weather Pulse",
+      description: "A weather tracking dashboard providing hyper-local forecasts and historical data visualization.",
+      image: "https://images.unsplash.com/photo-1592210454359-9043f067919b?auto=format&fit=crop&q=80&w=800",
+      tags: "React, D3.js, API",
       isFeatured: false,
-      link: "https://github.com/abir-islam-z/sentiment-pulse",
-      github: "https://github.com/abir-islam-z/sentiment-pulse",
+      link: "https://github.com/johndoe/weather-pulse",
+      github: "https://github.com/johndoe/weather-pulse",
       order: 3
     }
   ]
@@ -122,15 +122,15 @@ async function main() {
   // --- Testimonials ---
   const testimonials = [
     {
-      name: "Sarah Chen",
-      role: "CTO at FinTech Corp",
-      content: "Abrar's ability to translate complex AI concepts into working products is unmatched. He delivered our RAG system ahead of schedule.",
+      name: "Jane Smith",
+      role: "Product Manager at Innovate Inc",
+      content: "John's technical expertise and attention to detail transformed our product. He's a rare talent who understands both code and design.",
       order: 1
     },
     {
-      name: "James Wilson",
-      role: "Product Manager",
-      content: "Excellent communication and technical skills. The data bot he built has saved our team hundreds of hours of manual research.",
+      name: "Michael Brown",
+      role: "Founder at Future Tech",
+      content: "The best developer we've worked with. John delivered a complex feature set ahead of schedule and with zero bugs.",
       order: 2
     }
   ]
@@ -141,17 +141,17 @@ async function main() {
   // --- Certifications ---
   const certifications = [
     {
-      title: "AWS Certified Machine Learning - Specialty",
+      title: "AWS Certified Solutions Architect",
       issuer: "Amazon Web Services",
       date: "2023",
-      link: "https://aws.amazon.com/certification/certified-machine-learning-specialty/",
+      link: "https://aws.amazon.com/certification/",
       order: 1
     },
     {
-      title: "Natural Language Processing Specialization",
-      issuer: "DeepLearning.AI",
-      date: "2022",
-      link: "https://www.coursera.org/specializations/natural-language-processing",
+      title: "Full Stack Web Development",
+      issuer: "Code Academy",
+      date: "2021",
+      link: "#",
       order: 2
     }
   ]
@@ -163,11 +163,11 @@ async function main() {
   await prisma.footer.create({
     data: {
       id: "singleton",
-      bio: "Data Scientist specializing in Generative AI, RAG, and NLP. Based in London, UK.",
-      email: "hello@abrarfahim.co.uk",
-      linkedin: "https://linkedin.com",
-      github: "https://github.com",
-      twitter: "https://twitter.com",
+      bio: "Full Stack Developer specializing in modern web technologies. Based in Silicon Valley, CA.",
+      email: "hello@johndoe.com",
+      linkedin: "https://linkedin.com/in/johndoe",
+      github: "https://github.com/johndoe",
+      twitter: "https://twitter.com/johndoe",
       availability: "Open for Opportunities"
     }
   })

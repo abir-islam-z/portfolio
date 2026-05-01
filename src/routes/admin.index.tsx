@@ -1,13 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router"
-import { useEffect, useState } from "react"
-import { RiAddLine, RiDeleteBinLine, RiSaveLine } from "@remixicon/react"
-import { toast } from "sonner"
+import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
+import { Textarea } from "@/components/ui/textarea"
 import {
   deleteStat,
   getFooter,
@@ -17,6 +13,10 @@ import {
   updateHero,
   updateStat,
 } from "@/lib/cms"
+import { RiAddLine, RiDeleteBinLine, RiSaveLine } from "@remixicon/react"
+import { createFileRoute } from "@tanstack/react-router"
+import { useEffect, useState } from "react"
+import { toast } from "sonner"
 
 interface FooterData {
   id?: string
@@ -50,7 +50,7 @@ interface StatItem {
 function AdminIndexComponent() {
   const [hero, setHero] = useState<HeroData>({
     id: "singleton",
-    title: "Meet Abrar",
+    title: "Meet John",
     description: "60 second intro",
     introBadge: "INTRO",
     videoDuration: "0:60",
@@ -76,13 +76,13 @@ function AdminIndexComponent() {
       setError(null)
       try {
         const h = await getHero()
-        if (h) setHero(h as HeroData)
+        setHero(h)
 
         const s = await getStats()
-        if (s) setStats(s as Array<StatItem>)
+        setStats(s)
 
         const f = await getFooter()
-        if (f) setFooter(f as FooterData)
+        setFooter(f)
       } catch (err: any) {
         console.error("Dashboard load error:", err)
         setError(
@@ -101,9 +101,11 @@ function AdminIndexComponent() {
     try {
       await updateHero({ data: hero })
       toast.success("Hero updated successfully!")
-    } catch (error: any) {
-      console.error("Hero update failed:", error)
-      toast.error(error?.message || "Failed to update Hero section")
+    } catch (err: unknown) {
+      console.error("Hero update failed:", err)
+      if (err instanceof Error) {
+        toast.error(err.message || "Failed to update Hero section")
+      }
     }
   }
 
@@ -111,11 +113,13 @@ function AdminIndexComponent() {
     try {
       await updateFooter({ data: footer })
       toast.success("Footer updated successfully!")
-    } catch (error: any) {
-      console.error("Footer update failed:", error)
-      toast.error(
-        error?.message || "Failed to update Footer (Check if email is valid)"
-      )
+    } catch (err: unknown) {
+      console.error("Footer update failed:", err)
+      if (err instanceof Error) {
+        toast.error(
+          err.message || "Failed to update Footer (Check if email is valid)"
+        )
+      }
     }
   }
 
@@ -123,11 +127,13 @@ function AdminIndexComponent() {
     try {
       await updateStat({ data: stat })
       const updatedStats = await getStats()
-      setStats(updatedStats as Array<StatItem>)
+      setStats(updatedStats)
       toast.success("Stat saved successfully!")
-    } catch (error: any) {
-      console.error("Stat save failed:", error)
-      toast.error(error?.message || "Failed to save stat")
+    } catch (err: unknown) {
+      console.error("Stat save failed:", err)
+      if (err instanceof Error) {
+        toast.error(err.message || "Failed to save stat")
+      }
     }
   }
 
@@ -139,7 +145,7 @@ function AdminIndexComponent() {
     if (id) {
       await deleteStat({ data: id })
       const updatedStats = await getStats()
-      setStats(updatedStats as Array<StatItem>)
+      setStats(updatedStats)
     } else {
       setStats(stats.filter((s) => s.id !== undefined))
     }

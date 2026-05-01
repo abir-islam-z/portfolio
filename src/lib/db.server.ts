@@ -1,5 +1,6 @@
 import { PrismaPg } from "@prisma/adapter-pg"
 import { PrismaClient } from "@prisma/client"
+import { env } from "@prisma/config"
 import { Pool } from "pg"
 
 let prisma: PrismaClient | undefined
@@ -9,7 +10,7 @@ export const getDb = async () => {
 
   console.log(`[DB] Initializing Prisma Client with PostgreSQL adapter...`)
 
-  const url = process.env.DATABASE_URL
+  const url = env("DATABASE_URL")
   if (!url) {
     throw new Error("DATABASE_URL is not defined")
   }

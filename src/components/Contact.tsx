@@ -24,8 +24,8 @@ interface FooterData {
 }
 
 const FALLBACK_FOOTER: FooterData = {
-  bio: "Data Scientist specializing in Generative AI, RAG, and NLP. Based in London, UK.",
-  email: "hello@abrarfahim.co.uk",
+  bio: "Full Stack Developer specializing in modern web technologies. Based in Silicon Valley, CA.",
+  email: "hello@johndoe.com",
   linkedin: "#",
   github: "#",
   twitter: "#",
@@ -81,7 +81,7 @@ export default function Contact() {
         <div className="space-y-6 md:space-y-8 text-center lg:text-left">
           <div>
             <h2 className="mb-6 md:mb-8 text-4xl md:text-6xl leading-tight font-black tracking-tighter">
-              Data Scientist <br />
+              Full Stack Developer <br />
               <span className="text-primary">who ships?</span>
             </h2>
             <p className="text-lg md:text-xl leading-relaxed text-muted-foreground">
@@ -141,7 +141,7 @@ export default function Contact() {
                 <Input
                   id="name"
                   name="name"
-                  placeholder="Abrar Fahim"
+                  placeholder="John Doe"
                   required
                   className="h-12 rounded-xl border-border bg-background/50"
                 />
@@ -157,7 +157,7 @@ export default function Contact() {
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="hello@abrarfahim.co.uk"
+                  placeholder="hello@johndoe.com"
                   required
                   className="h-12 rounded-xl border-border bg-background/50"
                 />
@@ -194,7 +194,7 @@ export default function Contact() {
         <div className="grid gap-12 border-t border-border pt-16 md:pt-24 md:grid-cols-2 lg:grid-cols-4 text-center md:text-left">
           <div className="space-y-4 md:space-y-6">
             <div className="text-2xl font-black tracking-tighter italic">
-              AF
+              JD
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground mx-auto md:mx-0 max-w-[250px] md:max-w-none">
               {footer.bio}
@@ -250,7 +250,7 @@ export default function Contact() {
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 pb-8 text-[9px] md:text-[10px] font-bold tracking-widest text-muted-foreground/40 uppercase md:flex-row border-t border-border/20 pt-8">
           <div>
-            © {new Date().getFullYear()} Abrar Fahim. All Rights Reserved.
+            © {new Date().getFullYear()} John Doe. All Rights Reserved.
           </div>
           <div className="flex gap-6">
             <a href="#" className="transition-colors hover:text-primary">

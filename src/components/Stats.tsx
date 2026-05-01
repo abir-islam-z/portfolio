@@ -34,13 +34,13 @@ export default function Stats() {
       <div className="grid lg:grid-cols-2 gap-12 md:gap-16 items-start">
         <div className="max-w-xl text-center lg:text-left">
           <h2 className="text-2xl md:text-4xl font-extrabold mb-4 md:mb-6 leading-tight">
-            Hello, I&apos;m Abrar — <br className="hidden md:block" />
-            <span className="text-primary">Data Scientist</span> & Engineer.
+            Hello, I&apos;m John — <br className="hidden md:block" />
+            <span className="text-primary">Full Stack Developer</span> & Designer.
           </h2>
           <p className="text-muted-foreground text-base md:text-lg leading-relaxed">
-            I specialize in building intelligent data solutions that bridge the gap between complex 
-            unstructured data and actionable business insights. My focus lies in LLMs, RAG pipelines, 
-            and scalable machine learning systems.
+            I specialize in building modern web applications that provide exceptional user 
+            experiences. My focus lies in React, TypeScript, and scalable cloud 
+            architectures.
           </p>
         </div>
 

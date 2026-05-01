@@ -1,8 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
-  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+  provider = "prisma-client"
+  output   = "../generated/prisma"
 }
-
 datasource db {
   provider = "postgresql"
 }
@@ -19,7 +18,7 @@ model Hero {
   introBadge        String   @default("INTRO")
   videoDuration     String   @default("0:60")
   videoUrl          String   @default("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-  title             String   @default("Meet Abrar")
+  title             String   @default("Meet John")
   description       String   @default("60 second intro")
   openToWork        Boolean  @default(true)
   location          String   @default("London, UK")
@@ -89,8 +88,8 @@ model Certification {
 
 model Footer {
   id           String   @id @default("singleton")
-  bio          String   @default("Data Scientist specializing in Generative AI, RAG, and NLP. Based in London, UK.")
-  email        String   @default("hello@abrarfahim.co.uk")
+  bio          String   @default("Full Stack Developer specializing in modern web technologies. Based in Silicon Valley, CA.")
+  email        String   @default("hello@johndoe.com")
   linkedin     String   @default("#")
   github       String   @default("#")
   twitter      String   @default("#")

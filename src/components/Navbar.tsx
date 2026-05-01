@@ -21,7 +21,7 @@ export function Navbar() {
     <nav className="sticky top-0 z-50 glass border-b border-border/40 px-4 md:px-6 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link to="/" className="text-xl font-bold tracking-tight">
-          <span className="text-primary italic">AF</span>
+          <span className="text-primary italic">JD</span>
         </Link>
         
         {/* Desktop Nav */}

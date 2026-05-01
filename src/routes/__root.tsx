@@ -1,3 +1,5 @@
+import { Navbar } from "@/components/Navbar"
+import { getHero, getUser } from "@/lib/cms"
 import { TanStackDevtools } from "@tanstack/react-devtools"
 import {
   HeadContent,
@@ -9,8 +11,6 @@ import {
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import { Toaster } from "sonner"
 import appCss from "../styles.css?url"
-import { Navbar } from "@/components/Navbar"
-import { getUser } from "@/lib/cms"
 
 export const Route = createRootRoute({
   beforeLoad: async () => {
@@ -19,34 +19,46 @@ export const Route = createRootRoute({
       user,
     }
   },
-  head: () => ({
-    meta: [
-      {
-        charSet: "utf-8",
-      },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1",
-      },
-      {
-        title: "Abrar Fahim | Data Scientist",
-      },
-      {
-        name: "description",
-        content: "Data Scientist | LLMs, RAG & NLP | London, UK",
-      },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-    ],
-  }),
+  loader: async () => {
+    const hero = await getHero()
+    return {
+      hero,
+    }
+  },
+  head: ({ loaderData }) => {
+    const hero = loaderData?.hero
+    return {
+      meta: [
+        {
+          charSet: "utf-8",
+        },
+        {
+          name: "viewport",
+          content: "width=device-width, initial-scale=1",
+        },
+        {
+          title: hero?.title || "John Doe | Full Stack Developer",
+        },
+        {
+          name: "description",
+          content:
+            hero?.description || "Data Scientist | LLMs, RAG & NLP | London, UK",
+        },
+      ],
+      links: [
+        {
+          rel: "stylesheet",
+          href: appCss,
+        },
+      ],
+    }
+  },
   notFoundComponent: () => (
     <main className="container mx-auto p-4 pt-16 text-center">
-      <h1 className="text-4xl font-bold mb-4">404</h1>
-      <p className="text-muted-foreground">The requested page could not be found.</p>
+      <h1 className="mb-4 text-4xl font-bold">404</h1>
+      <p className="text-muted-foreground">
+        The requested page could not be found.
+      </p>
     </main>
   ),
   component: RootDocument,

@@ -4,6 +4,7 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite"
 import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 import viteTsConfigPaths from "vite-tsconfig-paths"
+import { nitro } from 'nitro/vite'
 
 const config = defineConfig({
   plugins: [
@@ -14,6 +15,9 @@ const config = defineConfig({
       projects: ["./tsconfig.json"],
     }),
     tailwindcss(),
+     nitro({
+      preset: 'vercel' // Often optional as Vercel detects this
+    })
   ],
   ssr: {
     external: [

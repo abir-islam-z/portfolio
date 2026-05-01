@@ -1,11 +1,12 @@
-import bcrypt from "bcryptjs"
-import { ZodError, z } from "zod"
 import {
   deleteCookie,
   getCookie,
   setCookie,
 } from "@tanstack/react-start/server"
+import bcrypt from "bcryptjs"
+import { ZodError } from "zod"
 import { decrypt, encrypt } from "./auth"
+import type { LoginSchema } from "./cms"
 import { getDb } from "./db.server"
 
 // --- UTILS ---
@@ -28,24 +29,29 @@ export async function checkAuth() {
 }
 
 // --- AUTH ---
-export async function loginServer(data: any) {
-  const { username, password } = data
-  const user = await (await getDb()).user.findUnique({ where: { username } })
+export async function loginServer(data: LoginSchema) {
+  try {
+    const { username, password } = data
+    console.log("[CMS.SERVER] loginServer calling.", { username, password })
+    const db = await getDb()
+    const user = await db.user.findUniqueOrThrow({ where: { username } })
+    const match = await bcrypt.compare(password, user.password)
 
-  if (!user || !(await bcrypt.compare(password, user.password))) {
-    throw new Error("Invalid credentials")
+    if (!match) throw new Error("Invalid credentials")
+
+    const session = await encrypt({ userId: user.id, username: user.username })
+    setCookie("session", session, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 2, // 2 hours
+    })
+
+    return { success: true }
+  } catch (error) {
+    throw new Error(formatZodError(error))
   }
-
-  const session = await encrypt({ userId: user.id, username: user.username })
-  setCookie("session", session, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 2, // 2 hours
-  })
-
-  return { success: true }
 }
 
 export async function logoutServer() {
@@ -64,31 +70,19 @@ export async function getUserServer() {
   }
 }
 
-export async function seedAdminServer() {
-  const existing = await (await getDb()).user.findFirst()
-  if (existing) return { message: "Admin already exists" }
-
-  const hashedPassword = await bcrypt.hash("admin", 10)
-  await (await getDb()).user.create({
-    data: {
-      username: "admin",
-      password: hashedPassword,
-    },
-  })
-  return { message: "Admin created (admin/admin). Change this immediately!" }
-}
-
 // --- HERO ---
 export async function getHeroServer() {
   console.log("[CMS.SERVER] getHeroServer calling.")
-  let hero = await (await getDb()).hero.findUnique({
+  let hero = await (
+    await getDb()
+  ).hero.findUnique({
     where: { id: "singleton" },
   })
   if (!hero) {
     hero = {
       id: "singleton",
       introBadge: "INTRO",
-      title: "Meet Abrar",
+      title: "Meet John",
       description: "60 second intro",
       videoDuration: "0:60",
       videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
@@ -104,7 +98,9 @@ export async function getHeroServer() {
 export async function updateHeroServer(data: any) {
   try {
     await checkAuth()
-    return await (await getDb()).hero.upsert({
+    return await (
+      await getDb()
+    ).hero.upsert({
       where: { id: "singleton" },
       update: data,
       create: { id: "singleton", ...data },
@@ -117,14 +113,16 @@ export async function updateHeroServer(data: any) {
 // --- FOOTER ---
 export async function getFooterServer() {
   console.log("[CMS.SERVER] getFooterServer calling.")
-  let footer = await (await getDb()).footer.findUnique({
+  let footer = await (
+    await getDb()
+  ).footer.findUnique({
     where: { id: "singleton" },
   })
   if (!footer) {
     footer = {
       id: "singleton",
-      bio: "Data Scientist specializing in Generative AI, RAG, and NLP. Based in London, UK.",
-      email: "hello@abrarfahim.co.uk",
+      bio: "Full Stack Developer specializing in modern web technologies. Based in Silicon Valley, CA.",
+      email: "hello@johndoe.com",
       linkedin: "#",
       github: "#",
       twitter: "#",
@@ -139,7 +137,9 @@ export async function updateFooterServer(data: any) {
   try {
     await checkAuth()
     const { id, ...rest } = data
-    return await (await getDb()).footer.upsert({
+    return await (
+      await getDb()
+    ).footer.upsert({
       where: { id: "singleton" },
       update: rest,
       create: { id: "singleton", ...rest },
@@ -152,7 +152,9 @@ export async function updateFooterServer(data: any) {
 // --- STATS ---
 export async function getStatsServer() {
   console.log("[CMS.SERVER] getStatsServer calling.")
-  return await (await getDb()).stat.findMany({
+  return await (
+    await getDb()
+  ).stat.findMany({
     orderBy: { order: "asc" },
   })
 }
@@ -177,7 +179,9 @@ export async function deleteStatServer(id: number) {
 
 // --- EXPERIENCE ---
 export async function getExperienceServer() {
-  return await (await getDb()).experience.findMany({
+  return await (
+    await getDb()
+  ).experience.findMany({
     orderBy: { order: "asc" },
   })
 }
@@ -187,7 +191,9 @@ export async function updateExperienceServer(data: any) {
     await checkAuth()
     const { id, ...rest } = data
     if (id) {
-      return await (await getDb()).experience.update({ where: { id }, data: rest })
+      return await (
+        await getDb()
+      ).experience.update({ where: { id }, data: rest })
     }
     return await (await getDb()).experience.create({ data: rest })
   } catch (error: any) {
@@ -202,7 +208,9 @@ export async function deleteExperienceServer(id: number) {
 
 // --- PROJECTS ---
 export async function getProjectsServer() {
-  return await (await getDb()).project.findMany({
+  return await (
+    await getDb()
+  ).project.findMany({
     orderBy: { order: "asc" },
   })
 }
@@ -236,14 +244,18 @@ export async function submitContactServer(data: any) {
 
 export async function getContactMessagesServer() {
   await checkAuth()
-  return await (await getDb()).contactMessage.findMany({
+  return await (
+    await getDb()
+  ).contactMessage.findMany({
     orderBy: { createdAt: "desc" },
   })
 }
 
 // --- TESTIMONIALS ---
 export async function getTestimonialsServer() {
-  return await (await getDb()).testimonial.findMany({
+  return await (
+    await getDb()
+  ).testimonial.findMany({
     orderBy: { order: "asc" },
   })
 }
@@ -253,7 +265,9 @@ export async function updateTestimonialServer(data: any) {
     await checkAuth()
     const { id, ...rest } = data
     if (id) {
-      return await (await getDb()).testimonial.update({ where: { id }, data: rest })
+      return await (
+        await getDb()
+      ).testimonial.update({ where: { id }, data: rest })
     }
     return await (await getDb()).testimonial.create({ data: rest })
   } catch (error: any) {
@@ -268,7 +282,9 @@ export async function deleteTestimonialServer(id: number) {
 
 // --- CERTIFICATIONS ---
 export async function getCertificationsServer() {
-  return await (await getDb()).certification.findMany({
+  return await (
+    await getDb()
+  ).certification.findMany({
     orderBy: { order: "asc" },
   })
 }
@@ -278,7 +294,9 @@ export async function updateCertificationServer(data: any) {
     await checkAuth()
     const { id, ...rest } = data
     if (id) {
-      return await (await getDb()).certification.update({ where: { id }, data: rest })
+      return await (
+        await getDb()
+      ).certification.update({ where: { id }, data: rest })
     }
     return await (await getDb()).certification.create({ data: rest })
   } catch (error: any) {
