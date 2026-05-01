@@ -1,11 +1,11 @@
 import { PrismaPg } from "@prisma/adapter-pg"
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient } from "../../generated/prisma/client"
 import { env } from "@prisma/config"
 import { Pool } from "pg"
 
 let prisma: PrismaClient | undefined
 
-export const getDb = async () => {
+export const getDb = () => {
   if (prisma) return prisma
 
   console.log(`[DB] Initializing Prisma Client with PostgreSQL adapter...`)

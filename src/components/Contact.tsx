@@ -41,9 +41,9 @@ export default function Contact() {
     async function loadFooter() {
       try {
         const data = await getFooter()
-        if (data) setFooter(data as FooterData)
-      } catch (error) {
-        console.error("Failed to fetch footer data.", error)
+        setFooter(data)
+      } catch (err) {
+        console.error("Failed to fetch footer data.", err)
       }
     }
     loadFooter()
@@ -196,7 +196,7 @@ export default function Contact() {
             <div className="text-2xl font-black tracking-tighter italic">
               JD
             </div>
-            <p className="text-sm leading-relaxed text-muted-foreground mx-auto md:mx-0 max-w-[250px] md:max-w-none">
+            <p className="max-w-62.5 text-sm leading-relaxed text-muted-foreground mx-auto md:mx-0">
               {footer.bio}
             </p>
           </div>

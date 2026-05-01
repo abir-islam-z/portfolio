@@ -36,6 +36,7 @@ async function main() {
       videoDuration: "0:45",
       location: "Silicon Valley, CA",
       sponsorshipInfo: "Available for remote & on-site opportunities",
+      resumeUrl: "#",
       openToWork: true
     }
   })

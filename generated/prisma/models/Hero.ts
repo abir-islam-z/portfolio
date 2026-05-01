@@ -34,6 +34,7 @@ export type HeroMinAggregateOutputType = {
   openToWork: boolean | null
   location: string | null
   sponsorshipInfo: string | null
+  resumeUrl: string | null
   updatedAt: Date | null
 }
 
@@ -47,6 +48,7 @@ export type HeroMaxAggregateOutputType = {
   openToWork: boolean | null
   location: string | null
   sponsorshipInfo: string | null
+  resumeUrl: string | null
   updatedAt: Date | null
 }
 
@@ -60,6 +62,7 @@ export type HeroCountAggregateOutputType = {
   openToWork: number
   location: number
   sponsorshipInfo: number
+  resumeUrl: number
   updatedAt: number
   _all: number
 }
@@ -75,6 +78,7 @@ export type HeroMinAggregateInputType = {
   openToWork?: true
   location?: true
   sponsorshipInfo?: true
+  resumeUrl?: true
   updatedAt?: true
 }
 
@@ -88,6 +92,7 @@ export type HeroMaxAggregateInputType = {
   openToWork?: true
   location?: true
   sponsorshipInfo?: true
+  resumeUrl?: true
   updatedAt?: true
 }
 
@@ -101,6 +106,7 @@ export type HeroCountAggregateInputType = {
   openToWork?: true
   location?: true
   sponsorshipInfo?: true
+  resumeUrl?: true
   updatedAt?: true
   _all?: true
 }
@@ -187,6 +193,7 @@ export type HeroGroupByOutputType = {
   openToWork: boolean
   location: string
   sponsorshipInfo: string
+  resumeUrl: string
   updatedAt: Date
   _count: HeroCountAggregateOutputType | null
   _min: HeroMinAggregateOutputType | null
@@ -221,6 +228,7 @@ export type HeroWhereInput = {
   openToWork?: Prisma.BoolFilter<"Hero"> | boolean
   location?: Prisma.StringFilter<"Hero"> | string
   sponsorshipInfo?: Prisma.StringFilter<"Hero"> | string
+  resumeUrl?: Prisma.StringFilter<"Hero"> | string
   updatedAt?: Prisma.DateTimeFilter<"Hero"> | Date | string
 }
 
@@ -234,6 +242,7 @@ export type HeroOrderByWithRelationInput = {
   openToWork?: Prisma.SortOrder
   location?: Prisma.SortOrder
   sponsorshipInfo?: Prisma.SortOrder
+  resumeUrl?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -250,6 +259,7 @@ export type HeroWhereUniqueInput = Prisma.AtLeast<{
   openToWork?: Prisma.BoolFilter<"Hero"> | boolean
   location?: Prisma.StringFilter<"Hero"> | string
   sponsorshipInfo?: Prisma.StringFilter<"Hero"> | string
+  resumeUrl?: Prisma.StringFilter<"Hero"> | string
   updatedAt?: Prisma.DateTimeFilter<"Hero"> | Date | string
 }, "id">
 
@@ -263,6 +273,7 @@ export type HeroOrderByWithAggregationInput = {
   openToWork?: Prisma.SortOrder
   location?: Prisma.SortOrder
   sponsorshipInfo?: Prisma.SortOrder
+  resumeUrl?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.HeroCountOrderByAggregateInput
   _max?: Prisma.HeroMaxOrderByAggregateInput
@@ -282,6 +293,7 @@ export type HeroScalarWhereWithAggregatesInput = {
   openToWork?: Prisma.BoolWithAggregatesFilter<"Hero"> | boolean
   location?: Prisma.StringWithAggregatesFilter<"Hero"> | string
   sponsorshipInfo?: Prisma.StringWithAggregatesFilter<"Hero"> | string
+  resumeUrl?: Prisma.StringWithAggregatesFilter<"Hero"> | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Hero"> | Date | string
 }
 
@@ -295,6 +307,7 @@ export type HeroCreateInput = {
   openToWork?: boolean
   location?: string
   sponsorshipInfo?: string
+  resumeUrl?: string
   updatedAt?: Date | string
 }
 
@@ -308,6 +321,7 @@ export type HeroUncheckedCreateInput = {
   openToWork?: boolean
   location?: string
   sponsorshipInfo?: string
+  resumeUrl?: string
   updatedAt?: Date | string
 }
 
@@ -321,6 +335,7 @@ export type HeroUpdateInput = {
   openToWork?: Prisma.BoolFieldUpdateOperationsInput | boolean
   location?: Prisma.StringFieldUpdateOperationsInput | string
   sponsorshipInfo?: Prisma.StringFieldUpdateOperationsInput | string
+  resumeUrl?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -334,6 +349,7 @@ export type HeroUncheckedUpdateInput = {
   openToWork?: Prisma.BoolFieldUpdateOperationsInput | boolean
   location?: Prisma.StringFieldUpdateOperationsInput | string
   sponsorshipInfo?: Prisma.StringFieldUpdateOperationsInput | string
+  resumeUrl?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -347,6 +363,7 @@ export type HeroCreateManyInput = {
   openToWork?: boolean
   location?: string
   sponsorshipInfo?: string
+  resumeUrl?: string
   updatedAt?: Date | string
 }
 
@@ -360,6 +377,7 @@ export type HeroUpdateManyMutationInput = {
   openToWork?: Prisma.BoolFieldUpdateOperationsInput | boolean
   location?: Prisma.StringFieldUpdateOperationsInput | string
   sponsorshipInfo?: Prisma.StringFieldUpdateOperationsInput | string
+  resumeUrl?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -373,6 +391,7 @@ export type HeroUncheckedUpdateManyInput = {
   openToWork?: Prisma.BoolFieldUpdateOperationsInput | boolean
   location?: Prisma.StringFieldUpdateOperationsInput | string
   sponsorshipInfo?: Prisma.StringFieldUpdateOperationsInput | string
+  resumeUrl?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -386,6 +405,7 @@ export type HeroCountOrderByAggregateInput = {
   openToWork?: Prisma.SortOrder
   location?: Prisma.SortOrder
   sponsorshipInfo?: Prisma.SortOrder
+  resumeUrl?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -399,6 +419,7 @@ export type HeroMaxOrderByAggregateInput = {
   openToWork?: Prisma.SortOrder
   location?: Prisma.SortOrder
   sponsorshipInfo?: Prisma.SortOrder
+  resumeUrl?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -412,6 +433,7 @@ export type HeroMinOrderByAggregateInput = {
   openToWork?: Prisma.SortOrder
   location?: Prisma.SortOrder
   sponsorshipInfo?: Prisma.SortOrder
+  resumeUrl?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -431,6 +453,7 @@ export type HeroSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   openToWork?: boolean
   location?: boolean
   sponsorshipInfo?: boolean
+  resumeUrl?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["hero"]>
 
@@ -444,6 +467,7 @@ export type HeroSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   openToWork?: boolean
   location?: boolean
   sponsorshipInfo?: boolean
+  resumeUrl?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["hero"]>
 
@@ -457,6 +481,7 @@ export type HeroSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   openToWork?: boolean
   location?: boolean
   sponsorshipInfo?: boolean
+  resumeUrl?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["hero"]>
 
@@ -470,10 +495,11 @@ export type HeroSelectScalar = {
   openToWork?: boolean
   location?: boolean
   sponsorshipInfo?: boolean
+  resumeUrl?: boolean
   updatedAt?: boolean
 }
 
-export type HeroOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "introBadge" | "videoDuration" | "videoUrl" | "title" | "description" | "openToWork" | "location" | "sponsorshipInfo" | "updatedAt", ExtArgs["result"]["hero"]>
+export type HeroOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "introBadge" | "videoDuration" | "videoUrl" | "title" | "description" | "openToWork" | "location" | "sponsorshipInfo" | "resumeUrl" | "updatedAt", ExtArgs["result"]["hero"]>
 
 export type $HeroPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Hero"
@@ -488,6 +514,7 @@ export type $HeroPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     openToWork: boolean
     location: string
     sponsorshipInfo: string
+    resumeUrl: string
     updatedAt: Date
   }, ExtArgs["result"]["hero"]>
   composites: {}
@@ -921,6 +948,7 @@ export interface HeroFieldRefs {
   readonly openToWork: Prisma.FieldRef<"Hero", 'Boolean'>
   readonly location: Prisma.FieldRef<"Hero", 'String'>
   readonly sponsorshipInfo: Prisma.FieldRef<"Hero", 'String'>
+  readonly resumeUrl: Prisma.FieldRef<"Hero", 'String'>
   readonly updatedAt: Prisma.FieldRef<"Hero", 'DateTime'>
 }
     

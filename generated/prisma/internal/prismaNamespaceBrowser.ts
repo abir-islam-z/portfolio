@@ -98,6 +98,7 @@ export const HeroScalarFieldEnum = {
   openToWork: 'openToWork',
   location: 'location',
   sponsorshipInfo: 'sponsorshipInfo',
+  resumeUrl: 'resumeUrl',
   updatedAt: 'updatedAt'
 } as const
 

@@ -42,6 +42,7 @@ export const heroSchema = z.object({
   description: z.string().optional(),
   location: z.string().optional(),
   sponsorshipInfo: z.string().optional(),
+  resumeUrl: z.string().optional(),
   openToWork: z.boolean().optional(),
 })
 

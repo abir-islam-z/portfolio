@@ -70,13 +70,13 @@ function AdminLayout() {
           {!isCollapsed ? (
             <div className="flex items-center gap-3 animate-in fade-in duration-300">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-xl font-bold text-primary-foreground">
-                AF
+                JD
               </div>
               <span className="font-bold tracking-tight">Admin</span>
             </div>
           ) : (
             <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground animate-in fade-in duration-300">
-              AF
+              JD
             </div>
           )}
           {!isCollapsed && (

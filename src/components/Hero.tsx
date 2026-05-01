@@ -45,7 +45,7 @@ export default function Hero() {
     async function loadHero() {
       try {
         const h = await getHero()
-        if (h) setData(h)
+        setData(h)
       } catch (error) {
         console.error("Failed to fetch hero data, using fallback.", error)
       }
@@ -65,12 +65,9 @@ export default function Hero() {
         : url
     }
     if (url.includes("vimeo.com")) {
-      const regExp =
-        /vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/(?:[^\/]*)\/videos\/|album\/(?:\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/
+      const regExp = /vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/(?:[^/]*)\/videos\/|album\/(?:\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/
       const match = url.match(regExp)
-      return match
-        ? `https://player.vimeo.com/video/${match[1]}?autoplay=1`
-        : url
+      return match ? `https://player.vimeo.com/video/${match[1]}?autoplay=1` : url
     }
     return url
   }
@@ -127,17 +124,13 @@ export default function Hero() {
                 onClick={() => setIsPlaying(true)}
                 className="h-16 w-16 rounded-full bg-primary shadow-[0_0_40px_rgba(0,112,243,0.4)] transition-transform hover:scale-110 hover:bg-primary/90 active:scale-95 md:h-20 md:w-20"
               >
-                <RiPlayFill
-                  size={32}
-                  className="md:size-[40px]"
-                  fill="currentColor"
-                />
+                <RiPlayFill size={32} className="text-white md:size-10" />
               </Button>
               <div className="text-center">
                 <h2 className="mb-1 text-lg font-bold text-white md:text-2xl">
                   {data.title}
                 </h2>
-                <p className="max-w-[200px] text-xs font-medium text-white/60 md:max-w-none md:text-sm">
+                <p className="max-w-50 text-xs font-medium text-white/60 md:max-w-none md:text-sm">
                   {data.description}
                 </p>
               </div>

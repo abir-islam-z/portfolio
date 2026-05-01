@@ -23,6 +23,7 @@ model Hero {
   openToWork        Boolean  @default(true)
   location          String   @default("London, UK")
   sponsorshipInfo   String   @default("No sponsorship needed")
+  resumeUrl         String   @default("#")
   updatedAt         DateTime @updatedAt
 }
 

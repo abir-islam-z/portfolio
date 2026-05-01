@@ -37,6 +37,7 @@ interface HeroData {
   videoUrl: string
   location: string
   sponsorshipInfo: string
+  resumeUrl: string
   openToWork: boolean
 }
 
@@ -57,6 +58,7 @@ function AdminIndexComponent() {
     videoUrl: "",
     location: "London, UK",
     sponsorshipInfo: "No sponsorship needed",
+    resumeUrl: "#",
     openToWork: true,
   })
   const [stats, setStats] = useState<Array<StatItem>>([])
@@ -240,6 +242,14 @@ function AdminIndexComponent() {
                 value={hero.videoUrl}
                 onChange={(e) => setHero({ ...hero, videoUrl: e.target.value })}
                 placeholder="https://www.youtube.com/watch?v=..."
+              />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label>Resume URL (Google Drive/Dropbox/Direct Link)</Label>
+              <Input
+                value={hero.resumeUrl}
+                onChange={(e) => setHero({ ...hero, resumeUrl: e.target.value })}
+                placeholder="https://drive.google.com/..."
               />
             </div>
             <div className="space-y-2 md:col-span-2">

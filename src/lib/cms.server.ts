@@ -22,6 +22,9 @@ export async function checkAuth() {
   if (!session) throw new Error("Unauthorized")
   try {
     const payload = await decrypt(session)
+    const db = await getDb()
+    const user = await db.user.findUnique({ where: { id: payload.userId } })
+    if (!user) throw new Error("Unauthorized")
     return payload
   } catch (e) {
     throw new Error("Unauthorized")
@@ -64,6 +67,12 @@ export async function getUserServer() {
   if (!session) return null
   try {
     const payload = await decrypt(session)
+    const db = await getDb()
+    const user = await db.user.findUnique({ where: { id: payload.userId } })
+    if (!user) {
+      await deleteCookie("session")
+      return null
+    }
     return payload
   } catch (e) {
     return null
@@ -88,6 +97,7 @@ export async function getHeroServer() {
       videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       location: "London, UK",
       sponsorshipInfo: "No sponsorship needed",
+      resumeUrl: "#",
       openToWork: true,
       updatedAt: new Date(),
     }
