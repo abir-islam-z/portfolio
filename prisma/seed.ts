@@ -17,14 +17,14 @@ async function main() {
   await prisma.footer.deleteMany({})
 
   // --- User ---
-  const hashedPassword = await bcrypt.hash("admin", 10)
+  const hashedPassword = await bcrypt.hash("ragnarok2550@@!!", 10)
   await prisma.user.create({
     data: {
-      username: "admin",
+      username: "fouzia",
       password: hashedPassword
     }
   })
-  console.log("User 'admin' with password 'admin' created.")
+  console.log("User 'fouzia' with secure password created.")
 
   // --- Hero ---
   await prisma.hero.create({
